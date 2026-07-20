@@ -1,0 +1,99 @@
+<main class="page">
+  <app-header />
+
+  <section class="contact-hero" style="background-image: url('assets/images/BF1.jpg')">
+    <div class="contact-hero-overlay">
+      <div class="contact-container">
+
+        <p class="eyebrow">BLACK FOREST · COLORADO SPRINGS · FRONT RANGE</p>
+        <h1><span class="red">Contact</span> Eric Mikuska</h1>
+        <p class="sub">Whether you're buying, selling, or just exploring your options — reach out and let's talk.</p>
+
+        <hr>
+
+        <div class="contact-grid">
+
+          <div class="contact-info">
+            <h2>Get In Touch</h2>
+            <div class="info-item">📞 <a href="tel:7192466309">719.246.6309</a></div>
+            <div class="info-item">✉️ <a href="mailto:emikuska@RedHatProperties.com">emikuska&#64;RedHatProperties.com</a></div>
+            <div class="info-item">🌐 <a href="http://www.RedHatProperties.com" target="_blank" rel="noopener">www.RedHatProperties.com</a></div>
+
+            <hr>
+
+            <h3>What I Can Help With</h3>
+            <ul class="help-list">
+              <li>→ Free home value analysis</li>
+              <li>→ Buying a Black Forest property</li>
+              <li>→ Equestrian & horse property search</li>
+              <li>→ Military / PCS relocation</li>
+              <li>→ Investment property guidance</li>
+              <li>→ General real estate questions</li>
+            </ul>
+          </div>
+
+          <form class="contact-form" (ngSubmit)="onSubmit()" [formGroup]="form">
+
+            <input type="text" formControlName="name" placeholder="Full Name">
+            @if (form.get('name')?.invalid && form.get('name')?.touched) {
+              <span class="error">{{ getErrorMessage('name') }}</span>
+            }
+
+            <input type="email" formControlName="email" placeholder="Email Address">
+            @if (form.get('email')?.invalid && form.get('email')?.touched) {
+              <span class="error">{{ getErrorMessage('email') }}</span>
+            }
+
+            <input type="tel" formControlName="phone" placeholder="Phone Number (optional)">
+            @if (form.get('phone')?.invalid && form.get('phone')?.touched) {
+              <span class="error">{{ getErrorMessage('phone') }}</span>
+            }
+
+            <!-- Hidden honeypot field - invisible to users, bots will fill it -->
+            <input type="text" formControlName="honeypot" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+            <select formControlName="subject">
+              <option value="">What can I help you with?</option>
+              <option value="home-value">Free Home Value Analysis</option>
+              <option value="buying">Buying a Property</option>
+              <option value="selling">Selling a Property</option>
+              <option value="horse-property">Horse / Equestrian Property</option>
+              <option value="relocation">Military / PCS Relocation</option>
+              <option value="investment">Investment Property</option>
+              <option value="other">General Question</option>
+            </select>
+            @if (form.get('subject')?.invalid && form.get('subject')?.touched) {
+              <span class="error">{{ getErrorMessage('subject') }}</span>
+            }
+
+            <textarea formControlName="message" rows="5" placeholder="Tell me a little about what you're looking for..."></textarea>
+            @if (form.get('message')?.invalid && form.get('message')?.touched) {
+              <span class="error">{{ getErrorMessage('message') }}</span>
+            }
+
+            <button type="submit" class="btn-primary"
+              [disabled]="form.invalid || isSubmitting"
+              [title]="form.invalid ? 'Please fill in all required fields' : 'Send your message'">
+              @if (isSubmitting) {
+                <span>Sending...</span>
+              } @else {
+                <span>Send Message &rarr;</span>
+              }
+            </button>
+
+            @if (alertMessage) {
+              <div class="form-alert">{{ alertMessage }}</div>
+            }
+
+          </form>
+        </div>
+
+        <p class="trust-line">I do not use tracking cookies or collect any data beyond your message.</p>
+        <a class="back-link" [routerLink]="'/'">← Back to Agent Hub</a>
+
+      </div>
+    </div>
+  </section>
+
+  <app-footer />
+</main>

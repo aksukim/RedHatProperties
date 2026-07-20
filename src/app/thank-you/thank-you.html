@@ -1,0 +1,34 @@
+<main class="page">
+  <app-header />
+
+  <section class="ty-hero" style="background-image: url('assets/images/BF1a.jpg')">
+    <div class="ty-hero-overlay">
+      <div class="ty-container">
+
+        <p class="eyebrow">RED HAT PROPERTIES · COLORADO SPRINGS</p>
+        <h1><span class="red">{{ title }}</span></h1>
+        <p class="sub">{{ message }}</p>
+
+        <hr>
+
+        @if (nextSteps.length > 0) {
+          <div class="highlight-box">
+            <strong>What happens next:</strong>
+            <ul>
+              @for (step of nextSteps; track step) {
+                <li>{{ step }}</li>
+              }
+            </ul>
+          </div>
+        }
+
+        <a class="btn-primary" [routerLink]="returnRoute">{{ returnLabel }} &rarr;</a>
+        <br><br>
+        <a class="back-link" [routerLink]="'/'">← Back to Agent Hub</a>
+
+      </div>
+    </div>
+  </section>
+
+  <app-footer />
+</main>

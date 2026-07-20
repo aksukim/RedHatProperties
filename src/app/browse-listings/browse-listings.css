@@ -1,0 +1,457 @@
+.load-error {
+  margin: 1.5rem 3rem;
+  padding: 0.85rem 1.25rem;
+  background-color: rgba(180, 0, 0, 0.2);
+  border: 1px solid #df000d;
+  border-radius: 6px;
+  color: #ffaaaa;
+  font-size: 0.85rem;
+}
+
+.load-error code {
+  color: #fff;
+  font-size: 0.8rem;
+}
+
+.listings-loading {
+  color: #666;
+  font-size: 0.85rem;
+  padding: 2rem 3rem;
+  font-style: italic;
+}
+
+/* ── Full page background ── */
+.page-bg {
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  height: 100vh;
+  position: relative;
+  display: flex;
+}
+
+.page-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(0,0,0,0.80) 20%, rgba(0,0,0,0.1) 100%);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* ── Hero ── */
+.listings-hero {
+  padding: 0.5in 3rem 3rem 3rem;
+}
+
+.listings-hero-content {
+  max-width: 580px;
+}
+
+.eyebrow {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #df000d;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.listings-hero h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 0.75rem;
+}
+
+.listings-hero h1 .red {
+  color: #df000d;
+}
+
+.listings-hero .sub {
+  font-size: 0.95rem;
+  color: #d0d0d0;
+  max-width: 700px;
+  line-height: 1.7;
+  white-space: nowrap;
+}
+
+/* ── Filters ── */
+.filters {
+  background-color: rgba(0,0,0,0.5);
+  padding: 1.25rem 3rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin: 0 3rem;
+}
+
+.filters-inner {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filters-inner select {
+  background-color: rgba(0,0,0,0.6);
+  color: #a7a9ac;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.btn-search {
+  background-color: #df000d;
+  color: #fff;
+  border: none;
+  padding: 0.45rem 1.25rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-search:hover {
+  background-color: #b0000a;
+}
+
+/* ── MLS Notice ── */
+.mls-notice {
+  text-align: center;
+  padding: 0.75rem;
+  background-color: rgba(0,0,0,0.4);
+  color: #888;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+/* ── Listings Carousel ── */
+.listings-grid {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 0 3rem 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: #df000d rgba(255,255,255,0.1);
+}
+
+.listings-grid::-webkit-scrollbar {
+  height: 4px;
+}
+
+.listings-grid::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+}
+
+.listings-grid::-webkit-scrollbar-thumb {
+  background-color: #df000d;
+  border-radius: 4px;
+}
+
+.listing-card {
+  min-width: 320px;
+  max-width: 320px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  background-color: rgba(20,20,20,0.85);
+  border: 1px solid #333;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.listing-card:hover {
+  border-color: #df000d;
+}
+
+.listing-img {
+  height: 220px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.75rem;
+}
+
+.listing-tags {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background-color: rgba(0,0,0,0.65);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.listing-price {
+  align-self: flex-end;
+  background-color: #df000d;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  padding: 0.3rem 0.75rem;
+  border-radius: 4px;
+}
+
+.listing-body {
+  padding: 1.25rem;
+}
+
+.listing-address {
+  font-size: 0.8rem;
+  color: #a7a9ac;
+  margin-bottom: 0.6rem;
+}
+
+.listing-specs {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  color: #ccc;
+  margin-bottom: 0.75rem;
+}
+
+.listing-desc {
+  font-size: 0.82rem;
+  color: #888;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.btn-primary {
+  background-color: #df000d;
+  color: #fff;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: background-color 0.2s ease;
+  display: inline-block;
+}
+
+.btn-primary:hover {
+  background-color: #b0000a;
+}
+
+.back-link {
+  display: block;
+  text-align: left;
+  padding: 1.5rem 3rem;
+  color: #a7a9ac;
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  color: #fff;
+}
+
+.listings-scroll {
+  flex: 1;
+  overflow-y: auto;
+  width: 100%;
+  min-height: 0;
+}
+
+/* ── Section headers ── */
+.listings-section {
+  padding: 2rem 3rem 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.section-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+  border-radius: 3px;
+}
+
+.section-badge.listed  { background-color: #df000d; color: #fff; }
+.section-badge.sold    { background-color: #2d6a2d; color: #fff; }
+.section-badge.mls     { background-color: rgba(255,255,255,0.1); color: #a7a9ac; border: 1px solid #444; }
+
+.section-divider {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  margin: 2rem 3rem;
+}
+
+/* ── Sold card extras ── */
+.sold-banner {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  background-color: rgba(45,106,45,0.9);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0.4rem;
+}
+
+.sold-prices {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.sold-label {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.sold-price {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #5cb85c;
+}
+
+.tag-mls {
+  background-color: rgba(223,0,13,0.75);
+}
+
+.listing-price-link {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.listing-price-link:hover {
+  background-color: #b0000a;
+}
+
+.listing-mls {
+  font-size: 0.72rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+.btn-zillow {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #006aff;
+  text-decoration: none;
+  border: 1px solid #006aff;
+  padding: 0.3rem 0.75rem;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-zillow:hover {
+  background-color: #006aff;
+  color: #fff;
+}
+
+.idx-embed-wrapper {
+  margin: 0 0 2rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #333;
+  background-color: #fff;
+}
+
+.idx-tip {
+  font-size: 0.82rem;
+  color: #a7a9ac;
+  background-color: rgba(0,0,0,0.3);
+  border-left: 3px solid #df000d;
+  padding: 0.6rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+}
+
+.idx-tip strong { color: #fff; }
+.idx-tip em { color: #df000d; font-style: normal; }
+
+/* ── MLS placeholder ── */
+.mls-placeholder {
+  text-align: center;
+  padding: 3rem 2rem;
+  background-color: rgba(0,0,0,0.3);
+  border: 1px dashed #444;
+  border-radius: 8px;
+  margin: 0 0 2rem;
+}
+
+.mls-placeholder-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.mls-placeholder-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.mls-placeholder-sub {
+  font-size: 0.85rem;
+  color: #888;
+  max-width: 480px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.7;
+}
+
+.idx-load-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.btn-load-search {
+  background-color: #df000d;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-load-search:hover {
+  background-color: #b0000a;
+}

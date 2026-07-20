@@ -1,0 +1,179 @@
+<main class="page">
+  <app-header />
+
+  <div class="page-bg" style="background-image: url('assets/images/BF6.jpg')">
+    <div class="page-bg-overlay">
+
+      <!-- ── Hero ── -->
+      <section class="listings-hero">
+        <div class="listings-hero-content">
+          <p class="eyebrow">COLORADO SPRINGS · BLACK FOREST · FRONT RANGE</p>
+          <h1>Browse <span class="red">Listings</span></h1>
+          <p class="sub">Active listings, recent sales, and equestrian properties across Colorado Springs and the Front Range.</p>
+        </div>
+      </section>
+
+      <div class="listings-scroll">
+
+        @if (loadError) {
+          <div class="load-error">
+            ⚠️ Could not load listings data. Please check the file exists and restart the server.
+          </div>
+        }
+
+        @if (!loaded) {
+          <div class="listings-loading">Loading listings…</div>
+        }
+
+        @if (loaded) {
+        <!-- ── Section 1: My Active Listings ── -->
+        <section class="listings-section">
+          <div class="section-header">
+            <h2>My Active Listings</h2>
+            <span class="section-badge listed">Listed by Eric Mikuska</span>
+          </div>
+          <div class="listings-grid">
+            @for (listing of myListings; track listing.id) {
+              <div class="listing-card">
+                <div class="listing-img" [style.background-image]="'url(' + listing.image + ')'">
+                  <div class="listing-tags">
+                    @for (tag of listing.tags; track tag) {
+                      <span class="tag">{{ tag }}</span>
+                    }
+                  </div>
+                  @if (listing.price) {
+                    <span class="listing-price">{{ formatPrice(listing.price) }}</span>
+                  } @else {
+                    <a class="listing-price listing-price-link"
+                       [routerLink]="'/contact'"
+                       [queryParams]="{ subject: 'buying', message: 'I\'m interested in ' + listing.address + (listing.mlsNumber ? ' (MLS# ' + listing.mlsNumber + ')' : '') + '. Please contact me with pricing and details.' }">
+                      Call for Price
+                    </a>
+                  }
+                </div>
+                <div class="listing-body">
+                  <p class="listing-address">{{ listing.address }}</p>
+                  <div class="listing-specs">
+                    @if (listing.beds) { <span>🛏 {{ listing.beds }} bd</span> }
+                    @if (listing.baths) { <span>🛁 {{ listing.baths }} ba</span> }
+                    @if (listing.sqft) { <span>📐 {{ listing.sqft | number }} sqft</span> }
+                    @if (listing.acres) { <span>🌿 {{ listing.acres }} acres</span> }
+                  </div>
+                  <p class="listing-desc">{{ listing.description }}</p>
+                  @if (listing.mlsNumber) {
+                    <p class="listing-mls">MLS# {{ listing.mlsNumber }}</p>
+                  }
+                  @if (listing.zillowUrl) {
+                    <a class="btn-zillow" [href]="listing.zillowUrl" target="_blank" rel="noopener">View on Zillow ↗</a>
+                  }
+                </div>
+              </div>
+            }
+            @empty {
+              <div class="listing-card listing-card-placeholder">
+                <div class="listing-img" style="background-image: url('assets/images/BF6.jpg')">
+                  <div class="listing-tags"><span class="tag">Coming Soon</span></div>
+                </div>
+                <div class="listing-body">
+                  <p class="listing-address">Colorado Springs &amp; Front Range</p>
+                  <p class="listing-desc">I'm out working leads and closing deals &mdash; new listings coming soon. Reach out to get first access.</p>
+                  <a class="btn-primary" [routerLink]="'/contact'">Contact Eric &rarr;</a>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- ── Section 2: Recently Sold ── -->
+        <section class="listings-section">
+          <div class="section-header">
+            <h2>Recently Sold</h2>
+            <span class="section-badge sold">Represented by Eric Mikuska</span>
+          </div>
+          <div class="listings-grid">
+            @for (listing of recentlySold; track listing.id) {
+              <div class="listing-card sold-card">
+                <div class="listing-img" [style.background-image]="'url(' + listing.image + ')'">
+                  <div class="sold-banner">SOLD — {{ listing.soldDate }}</div>
+                </div>
+                <div class="listing-body">
+                  <p class="listing-address">{{ listing.address }}</p>
+                  <div class="listing-specs">
+                    @if (listing.beds) { <span>🛏 {{ listing.beds }} bd</span> }
+                    @if (listing.baths) { <span>🛁 {{ listing.baths }} ba</span> }
+                    @if (listing.sqft) { <span>📐 {{ listing.sqft | number }} sqft</span> }
+                    @if (listing.acres) { <span>🌿 {{ listing.acres }} acres</span> }
+                  </div>
+                  <div class="sold-prices">
+                    <span class="sold-label">Sold for</span>
+                    <span class="sold-price">{{ formatPrice(listing.soldPrice) }}</span>
+                  </div>
+                  <p class="listing-desc">{{ listing.description }}</p>
+                  @if (listing.mlsNumber) {
+                    <p class="listing-mls">MLS# {{ listing.mlsNumber }}</p>
+                  }
+                  @if (listing.zillowUrl) {
+                    <a class="btn-zillow" [href]="listing.zillowUrl" target="_blank" rel="noopener">View on Zillow ↗</a>
+                  }
+                </div>
+              </div>
+            }
+            @empty {
+              <div class="listing-card listing-card-placeholder">
+                <div class="listing-img" style="background-image: url('assets/images/BF2.jpg')">
+                  <div class="sold-banner">SOLD</div>
+                </div>
+                <div class="listing-body">
+                  <p class="listing-address">Recent Sales</p>
+                  <p class="listing-desc">Sold listings will appear here. Every closing tells a story &mdash; yours could be next.</p>
+                  <a class="btn-primary" [routerLink]="'/contact'">Talk to Eric &rarr;</a>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- ── Section 3: Equestrian Listings (MLS) ── -->
+        <section class="listings-section">
+          <div class="section-header">
+            <h2>Equestrian &amp; Horse Properties</h2>
+            <span class="section-badge mls">Front Range MLS</span>
+          </div>
+
+          @if (!showSearch) {
+            <div class="idx-load-prompt">
+              <p class="idx-tip">💡 <strong>Tip:</strong> When the search loads, enter <strong>2.5</strong> in the <em>Min. Acres</em> field to filter for acreage properties.</p>
+              <button class="btn-load-search" (click)="showSearch = true">Load MLS Property Search</button>
+            </div>
+          }
+          @if (showSearch) {
+            <p class="idx-tip">💡 <strong>Tip:</strong> Enter <strong>2.5</strong> in the <em>Min. Acres</em> field to filter for acreage properties.</p>
+            <div class="idx-embed-wrapper">
+              <iframe [src]="equestrianIdxUrl"
+                width="100%"
+                height="700"
+                frameborder="0"
+                marginwidth="0"
+                marginheight="0"
+                tabindex="-1"
+                title="Equestrian & Horse Property Search — Pikes Peak MLS">
+              </iframe>
+            </div>
+          }
+        </section>
+
+        <a class="back-link" [routerLink]="'/'">← Back to Agent Hub</a>
+
+        } <!-- end @if (loaded) -->
+
+      </div><!-- end listings-scroll -->
+    </div><!-- end page-bg-overlay -->
+  </div><!-- end page-bg -->
+
+  <app-footer />
+</main>
+

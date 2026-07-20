@@ -1,0 +1,8 @@
+<div class="social-links">
+  <span>Connect with me:</span>
+  @for (link of links; track link.label) {
+    <a [href]="link.url" target="_blank" rel="noopener" [attr.aria-label]="link.label">
+      <img [src]="link.icon" [alt]="link.label" width="22" height="22">
+    </a>
+  }
+</div>

@@ -1,0 +1,262 @@
+<div class="admin-shell">
+
+  <!-- ── PIN GATE ── -->
+  @if (!isAuthenticated) {
+    <div class="pin-gate">
+      <div class="pin-card">
+        <img src="assets/images/LogoHat.jpg" alt="Red Hat Properties" class="pin-logo">
+        <h1>Admin Access</h1>
+        <p class="pin-sub">Listings Manager · Red Hat Properties</p>
+        <div class="pin-row">
+          <input
+            type="password"
+            [(ngModel)]="pinInput"
+            placeholder="Enter PIN"
+            class="pin-input"
+            autofocus
+            (keyup.enter)="checkPin()">
+          <button class="btn-pin" (click)="checkPin()">Enter →</button>
+        </div>
+        @if (pinError) {
+          <p class="pin-error">{{ pinError }}</p>
+        }
+        <a [routerLink]="'/'" class="pin-home-link">← Back to Home</a>
+      </div>
+    </div>
+  }
+
+  <!-- ── MAIN ADMIN ── -->
+  @if (isAuthenticated) {
+    <div class="admin-main">
+
+      <!-- Header -->
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <img src="assets/images/LogoHat.jpg" alt="Red Hat Properties" class="admin-logo">
+          <div>
+            <h1>Listings Manager</h1>
+            <span class="admin-sub">Red Hat Properties</span>
+          </div>
+        </div>
+        <div class="admin-header-right">
+          <a [routerLink]="'/browse-listings'" class="btn-view-site">← View Site</a>
+          <button class="btn-csv-export" (click)="importCsvInput.click()">↧ Import CSV</button>
+          <input #importCsvInput type="file" accept=".csv" style="display:none" (change)="importCsv($event)">
+          <button class="btn-download" (click)="exportCsv()">⬇ Save &amp; Download JSON</button>
+        </div>
+      </div>
+
+      <!-- Save banner -->
+      @if (saveMessage) {
+        <div class="save-banner">{{ saveMessage }}</div>
+      }
+
+      <!-- ── LIST VIEW ── -->
+      @if (mode === 'list') {
+
+        <div class="admin-tabs">
+          <button class="tab-btn" [class.active]="activeTab === 'active'" (click)="activeTab = 'active'">
+            Active Listings <span class="tab-count">{{ data.active.length }}</span>
+          </button>
+          <button class="tab-btn" [class.active]="activeTab === 'sold'" (click)="activeTab = 'sold'">
+            Recently Sold <span class="tab-count">{{ data.sold.length }}</span>
+          </button>
+        </div>
+
+        <div class="admin-content">
+
+          @if (activeTab === 'active') {
+            <div class="tab-toolbar">
+              <button class="btn-add" (click)="startAdd('active')">+ Add Active Listing</button>
+            </div>
+            <div class="listings-table">
+              @for (item of data.active; track item.id; let i = $index) {
+                <div class="listing-row">
+                  <div class="row-thumb" [style.background-image]="'url(' + item.image + ')'"></div>
+                  <div class="row-info">
+                    <p class="row-address">{{ item.address }}</p>
+                    <p class="row-meta">{{ formatPrice(item.price) }}{{ item.mlsNumber ? ' · MLS# ' + item.mlsNumber : '' }}</p>
+                  </div>
+                  <div class="row-actions">
+                    <button class="btn-edit" (click)="startEdit('active', i)">Edit</button>
+                    <button class="btn-delete" (click)="deleteEntry('active', i)">Delete</button>
+                  </div>
+                </div>
+              }
+              @empty {
+                <p class="empty-state">No active listings. Click "+ Add Active Listing" to get started.</p>
+              }
+            </div>
+          }
+
+          @if (activeTab === 'sold') {
+            <div class="tab-toolbar">
+              <button class="btn-add" (click)="startAdd('sold')">+ Add Sold Listing</button>
+            </div>
+            <div class="listings-table">
+              @for (item of data.sold; track item.id; let i = $index) {
+                <div class="listing-row">
+                  <div class="row-thumb" [style.background-image]="'url(' + item.image + ')'"></div>
+                  <div class="row-info">
+                    <p class="row-address">{{ item.address }}</p>
+                    <p class="row-meta">Sold {{ item.soldDate }} · {{ formatPrice(item.soldPrice) }}{{ item.mlsNumber ? ' · MLS# ' + item.mlsNumber : '' }}</p>
+                  </div>
+                  <div class="row-actions">
+                    <button class="btn-edit" (click)="startEdit('sold', i)">Edit</button>
+                    <button class="btn-delete" (click)="deleteEntry('sold', i)">Delete</button>
+                  </div>
+                </div>
+              }
+              @empty {
+                <p class="empty-state">No sold listings yet.</p>
+              }
+            </div>
+          }
+
+        </div>
+      }
+
+      <!-- ── EDIT VIEW ── -->
+      @if (mode === 'edit') {
+        <div class="edit-container">
+          <div class="edit-header">
+            <h2>{{ editingIndex === null ? 'Add' : 'Edit' }} {{ editingType === 'active' ? 'Active Listing' : 'Sold Listing' }}</h2>
+            <button class="btn-cancel" (click)="cancelEdit()">✕ Cancel</button>
+          </div>
+
+          <!-- Active Listing Form -->
+          @if (editingType === 'active') {
+            <div class="form-grid">
+              <div class="form-field col-2">
+                <label>Address</label>
+                <input type="text" [(ngModel)]="activeForm.address" placeholder="Full street address, City, State ZIP">
+              </div>
+              <div class="form-field">
+                <label>Price (0 = Call for Price)</label>
+                <input type="number" [(ngModel)]="activeForm.price" min="0">
+              </div>
+              <div class="form-field">
+                <label>MLS #</label>
+                <input type="text" [(ngModel)]="activeForm.mlsNumber" placeholder="e.g. 6742332">
+              </div>
+              <div class="form-field">
+                <label>Beds</label>
+                <input type="number" [(ngModel)]="activeForm.beds" min="0">
+              </div>
+              <div class="form-field">
+                <label>Baths</label>
+                <input type="number" [(ngModel)]="activeForm.baths" min="0" step="0.5">
+              </div>
+              <div class="form-field">
+                <label>Sq Ft</label>
+                <input type="number" [(ngModel)]="activeForm.sqft" min="0">
+              </div>
+              <div class="form-field">
+                <label>Acres</label>
+                <input type="number" [(ngModel)]="activeForm.acres" min="0" step="0.01">
+              </div>
+              <div class="form-field col-2">
+                <label>Zillow URL</label>
+                <input type="url" [(ngModel)]="activeForm.zillowUrl" placeholder="https://www.zillow.com/homedetails/...">
+              </div>
+              <div class="form-field col-2">
+                <label>Description</label>
+                <textarea [(ngModel)]="activeForm.description" rows="5" placeholder="Property description..."></textarea>
+              </div>
+              <div class="form-field col-2">
+                <label>Photo</label>
+                <div class="image-picker">
+                  @if (imagePreview) {
+                    <img [src]="imagePreview" alt="Preview" class="img-preview">
+                  }
+                  <input type="file" accept="image/*" (change)="onImagePicked($event)" class="file-input">
+                  <p class="img-hint">
+                    @if (pendingImageName) {
+                      ⚠️ Also copy <strong>{{ pendingImageName }}</strong> into <code>src/assets/images/</code> before deploying.
+                    } @else {
+                      Current file: <code>{{ activeForm.image || 'none set' }}</code>
+                    }
+                  </p>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Sold Listing Form -->
+          @if (editingType === 'sold') {
+            <div class="form-grid">
+              <div class="form-field col-2">
+                <label>Address</label>
+                <input type="text" [(ngModel)]="soldForm.address" placeholder="Full street address, City, State ZIP">
+              </div>
+              <div class="form-field">
+                <label>Sold Price</label>
+                <input type="number" [(ngModel)]="soldForm.soldPrice" min="0">
+              </div>
+              <div class="form-field">
+                <label>Sold Date</label>
+                <input type="text" [(ngModel)]="soldForm.soldDate" placeholder="e.g. May 14, 2025">
+              </div>
+              <div class="form-field">
+                <label>List Price (0 = unknown)</label>
+                <input type="number" [(ngModel)]="soldForm.price" min="0">
+              </div>
+              <div class="form-field">
+                <label>MLS #</label>
+                <input type="text" [(ngModel)]="soldForm.mlsNumber" placeholder="e.g. 8380057">
+              </div>
+              <div class="form-field">
+                <label>Beds</label>
+                <input type="number" [(ngModel)]="soldForm.beds" min="0">
+              </div>
+              <div class="form-field">
+                <label>Baths</label>
+                <input type="number" [(ngModel)]="soldForm.baths" min="0" step="0.5">
+              </div>
+              <div class="form-field">
+                <label>Sq Ft</label>
+                <input type="number" [(ngModel)]="soldForm.sqft" min="0">
+              </div>
+              <div class="form-field">
+                <label>Acres</label>
+                <input type="number" [(ngModel)]="soldForm.acres" min="0" step="0.01">
+              </div>
+              <div class="form-field col-2">
+                <label>Zillow URL</label>
+                <input type="url" [(ngModel)]="soldForm.zillowUrl" placeholder="https://www.zillow.com/homedetails/...">
+              </div>
+              <div class="form-field col-2">
+                <label>Description</label>
+                <textarea [(ngModel)]="soldForm.description" rows="5" placeholder="Property description..."></textarea>
+              </div>
+              <div class="form-field col-2">
+                <label>Photo</label>
+                <div class="image-picker">
+                  @if (imagePreview) {
+                    <img [src]="imagePreview" alt="Preview" class="img-preview">
+                  }
+                  <input type="file" accept="image/*" (change)="onImagePicked($event)" class="file-input">
+                  <p class="img-hint">
+                    @if (pendingImageName) {
+                      ⚠️ Also copy <strong>{{ pendingImageName }}</strong> into <code>src/assets/images/</code> before deploying.
+                    } @else {
+                      Current file: <code>{{ soldForm.image || 'none set' }}</code>
+                    }
+                  </p>
+                </div>
+              </div>
+            </div>
+          }
+
+          <div class="form-actions">
+            <button class="btn-cancel" (click)="cancelEdit()">Cancel</button>
+            <button class="btn-save" (click)="saveEntry()">✓ Save Listing</button>
+          </div>
+
+        </div>
+      }
+
+    </div>
+  }
+
+</div>

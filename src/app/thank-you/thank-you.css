@@ -1,0 +1,147 @@
+.container {
+  max-width: 640px;
+  margin: 3rem auto;
+  padding: 0 1.5rem;
+}
+
+.card {
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 2.5rem;
+  text-align: center;
+}
+
+.card h1 {
+  font-size: 2rem;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.card p {
+  color: #a7a9ac;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.highlight-box {
+  background-color: rgba(0,0,0,0.45);
+  border-left: 3px solid #df000d;
+  border-radius: 4px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  color: #a7a9ac;
+}
+
+.highlight-box strong {
+  color: #fff;
+}
+
+.highlight-box ul {
+  margin: 0.75rem 0 0 1.25rem;
+  line-height: 1.8;
+}
+
+.button {
+  display: inline-block;
+  background-color: #df000d;
+  color: #fff;
+  padding: 0.65rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.button:hover {
+  background-color: #b0000a;
+}
+
+.ty-hero {
+  min-height: auto;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+}
+
+.ty-hero-overlay {
+  position: relative;
+  inset: unset;
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.ty-container {
+  max-width: 580px;
+  width: 100%;
+  padding: 0.5in 3rem 3rem 3rem;
+}
+
+.eyebrow {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #df000d;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 0.75rem;
+}
+
+h1 .red { color: #df000d; }
+
+.sub {
+  font-size: 0.95rem;
+  color: #d0d0d0;
+  line-height: 1.7;
+}
+
+.highlight-box {
+  background-color: rgba(0,0,0,0.45);
+  border-left: 3px solid #df000d;
+  border-radius: 4px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  color: #a7a9ac;
+}
+
+.highlight-box strong {
+  color: #fff;
+}
+
+.highlight-box ul {
+  margin: 0.75rem 0 0 1.25rem;
+  line-height: 1.8;
+}
+
+.btn-primary {
+  display: inline-block;
+  background-color: #df000d;
+  color: #fff;
+  padding: 0.55rem 1.25rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover { background-color: #b0000a; }
+
+.back-link {
+  color: #a7a9ac;
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+
+.back-link:hover { color: #fff; }

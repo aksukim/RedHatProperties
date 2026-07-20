@@ -1,0 +1,190 @@
+<main class="page">
+  <app-header />
+
+  <section class="demo-hero">
+    <div class="container">
+      <h1>Form Protection Demo</h1>
+      <p class="subtitle">Real Estate Lead Capture with Advanced Spam Protection</p>
+
+      <div class="demo-controls">
+        <button (click)="toggleInquiryForm()" class="btn-control" [class.active]="showInquiryForm">
+          📋 Show Property Inquiry Form
+        </button>
+        <button (click)="toggleKwRedirect()" class="btn-control" [class.active]="showKwRedirect">
+          🔗 Show KW Redirect Component
+        </button>
+      </div>
+
+      <!-- Property Example Card -->
+      <div class="property-card">
+        <div class="property-image" [style.background-image]="'url(' + property.image + ')'"></div>
+        <div class="property-details">
+          <h2>{{ property.address }}</h2>
+          <div class="property-stats">
+            <span><strong>${{ property.price.toLocaleString() }}</strong></span>
+            <span>{{ property.beds }} Beds</span>
+            <span>{{ property.baths }} Baths</span>
+            <span>{{ property.sqft.toLocaleString() }} sqft</span>
+            <span>{{ property.acres }} Acres</span>
+          </div>
+          <p class="mls-number">MLS #{{ property.mlsNumber }}</p>
+        </div>
+      </div>
+
+      <!-- Demo Sections -->
+      <div class="demo-sections">
+
+        <!-- Property Inquiry Form -->
+        <div *ngIf="showInquiryForm" class="demo-section">
+          <div class="section-header">
+            <h3>Property Inquiry Form Component</h3>
+            <p>Full-featured form with dual intent (Get in Touch / Request Tour)</p>
+            <ul class="feature-list">
+              <li>✅ Disposable email detection (2000+ domains blocked)</li>
+              <li>✅ Typo-squatted domain detection (e.g., gmaill.com)</li>
+              <li>✅ Honeypot field for bot detection</li>
+              <li>✅ Garbage text validation (Shannon entropy)</li>
+              <li>✅ Minimum word count requirements</li>
+              <li>✅ Dynamic validation based on intent</li>
+              <li>✅ Responsive design with smooth animations</li>
+            </ul>
+          </div>
+
+          <app-property-inquiry 
+            [mlsNumber]="property.mlsNumber"
+            [propertyAddress]="property.address">
+          </app-property-inquiry>
+
+          <div class="testing-tips">
+            <h4>🧪 Testing Tips</h4>
+            <div class="tip-grid">
+              <div class="tip">
+                <strong>Test disposable email blocking:</strong>
+                <p>Try: test@mailinator.com, user@10minutemail.com</p>
+              </div>
+              <div class="tip">
+                <strong>Test typo detection:</strong>
+                <p>Try: user@gmaill.com (should suggest gmail.com)</p>
+              </div>
+              <div class="tip">
+                <strong>Test garbage text:</strong>
+                <p>Try: "asdf897asdfg" in the message field</p>
+              </div>
+              <div class="tip">
+                <strong>Test word count:</strong>
+                <p>Try: "hi" (needs at least 3 words)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KW Redirect Component -->
+        <div *ngIf="showKwRedirect" class="demo-section">
+          <div class="section-header">
+            <h3>KW Redirect Component (Phase 1 Solution)</h3>
+            <p>Simple redirect to Keller Williams portal - no backend required!</p>
+            <ul class="feature-list">
+              <li>✅ Zero infrastructure costs</li>
+              <li>✅ Instant deployment capability</li>
+              <li>✅ Smooth loading animation</li>
+              <li>✅ Opens in new tab with security attributes</li>
+              <li>✅ Direct email/phone contact options</li>
+              <li>✅ Professional trust messaging</li>
+            </ul>
+          </div>
+
+          <app-kw-redirect [mlsNumber]="property.mlsNumber"></app-kw-redirect>
+
+          <div class="implementation-note">
+            <h4>💡 When to Use This Component</h4>
+            <p>
+              Use the KW Redirect component if you want to go live immediately without 
+              building backend infrastructure. All lead capture, spam filtering, and 
+              CRM integration is handled by Keller Williams' existing systems.
+            </p>
+            <p>
+              <strong>Perfect for:</strong> Quick launch, testing market interest, or 
+              while developing your custom backend.
+            </p>
+          </div>
+        </div>
+
+        <!-- Documentation Section -->
+        <div class="documentation-section">
+          <h3>📚 Implementation Documentation</h3>
+          <div class="doc-grid">
+            <div class="doc-card">
+              <h4>Email Validation Service</h4>
+              <code>src/app/services/email-validation.service.ts</code>
+              <p>Comprehensive email validation including disposable domain detection and garbage text analysis.</p>
+            </div>
+            <div class="doc-card">
+              <h4>Custom Validators</h4>
+              <code>src/app/validators/email-validators.ts</code>
+              <p>Reusable Angular form validators for email quality, text validation, and spam detection.</p>
+            </div>
+            <div class="doc-card">
+              <h4>Turnstile Service</h4>
+              <code>src/app/services/turnstile.service.ts</code>
+              <p>Cloudflare Turnstile integration for invisible CAPTCHA protection (Phase 2).</p>
+            </div>
+            <div class="doc-card">
+              <h4>Full Documentation</h4>
+              <code>FORM_PROTECTION_README.md</code>
+              <p>Complete implementation guide, API integration examples, and deployment strategies.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature Comparison -->
+        <div class="comparison-section">
+          <h3>🔄 Deployment Strategy Comparison</h3>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Phase 1: KW Redirect</th>
+                <th>Phase 2: Custom Forms</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Time to Deploy</td>
+                <td class="highlight">✅ Immediate</td>
+                <td>⏱️ 2-4 weeks</td>
+              </tr>
+              <tr>
+                <td>Infrastructure Cost</td>
+                <td class="highlight">✅ $0/month</td>
+                <td>💰 $10-30/month</td>
+              </tr>
+              <tr>
+                <td>Spam Protection</td>
+                <td>✅ KW handles it</td>
+                <td class="highlight">✅ Full control</td>
+              </tr>
+              <tr>
+                <td>CRM Integration</td>
+                <td>✅ KW Command</td>
+                <td class="highlight">✅ Custom options</td>
+              </tr>
+              <tr>
+                <td>Customization</td>
+                <td>⚠️ Limited</td>
+                <td class="highlight">✅ Full control</td>
+              </tr>
+              <tr>
+                <td>Data Ownership</td>
+                <td>⚠️ KW platform</td>
+                <td class="highlight">✅ Your database</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <app-footer />
+</main>

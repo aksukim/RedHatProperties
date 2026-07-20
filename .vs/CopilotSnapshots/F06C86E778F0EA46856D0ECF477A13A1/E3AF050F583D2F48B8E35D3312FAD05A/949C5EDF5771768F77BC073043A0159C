@@ -1,0 +1,35 @@
+﻿import { Component } from '@angular/core';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { Nav } from '../nav/nav';
+import { Footer } from '../footer/footer';
+
+@Component({
+  selector: 'app-contact',
+  imports: [ReactiveFormsModule, RouterLink, Nav, Footer],
+  templateUrl: './contact.html',
+  styleUrl: './contact.css'
+})
+export class Contact {
+  form: FormGroup;
+  alertMessage = '';
+
+  constructor(private fb: FormBuilder) {
+    this.form = this.fb.group({
+      name:    ['', Validators.required],
+      email:   ['', [Validators.required, Validators.email]],
+      phone:   [''],
+      subject: ['', Validators.required],
+      message: ['', Validators.required]
+    });
+  }
+
+  onSubmit() {
+    if (this.form.valid) {
+      this.alertMessage = '✅ Thank you! I will be in touch shortly.';
+      this.form.reset();
+    } else {
+      this.form.markAllAsTouched();
+    }
+  }
+}

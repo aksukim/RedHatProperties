@@ -1,0 +1,112 @@
+.hero {
+  min-height: 92vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(0,0,0,0.75) 25%, rgba(0,0,0,0.1) 100%);
+  display: flex;
+  align-items: flex-start;
+}
+
+.hero-content {
+  max-width: 600px;
+  padding: 0.5in 3rem 5rem 1.5rem;
+}
+
+.hero-eyebrow {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #df000d;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.hero-headline {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+}
+
+.hero-headline .red {
+  color: #df000d;
+}
+
+.hero-sub {
+  font-size: 0.95rem;
+  color: #d0d0d0;
+  line-height: 1.7;
+  max-width: 480px;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+}
+
+app-nav {
+  /* Add any specific styles for app-nav if needed */
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1.75rem;
+  flex-wrap: wrap;
+}
+
+.tr-private-link {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.35);
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  transition: color 0.2s ease;
+}
+
+.tr-private-link:hover {
+  color: rgba(255,255,255,0.65);
+}
+
+.btn-primary {
+  background-color: #df000d;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #c7000a;
+}
+
+.btn-outline {
+  border: 2px solid #df000d;
+  color: #df000d;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-outline:hover {
+  background-color: #df000d;
+  color: #ffffff;
+}
+
+app-footer {
+  margin-top: 0;
+}

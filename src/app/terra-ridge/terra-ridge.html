@@ -1,0 +1,112 @@
+<main class="page">
+  <app-header />
+
+  <section class="tr-hero" style="background-image: url('assets/images/BF2.jpg')">
+    <div class="tr-hero-overlay">
+      <div class="container">
+
+        <p class="eyebrow">A PRIVATE RESOURCE FOR TERRA RIDGE HOMEOWNERS</p>
+        @if (fromBlackForest) {
+          <h1>Home Value Request</h1>
+        } @else {
+          <h1><span class="red">Terra Ridge</span> Home Value Request</h1>
+        }
+
+        <hr>
+
+        <p>As your Terra Ridge neighbor for over 20 years, I provide personalized home value insights based on real local market data—not automated online estimates.</p>
+
+        <div class="highlight-box">
+          <strong>Why this matters in Terra Ridge:</strong>
+          <ul>
+            <li>5-acre properties with unique layouts</li>
+            <li>Horse zoning and acreage value differences</li>
+            <li>Wells, septic systems, and utility variability</li>
+            <li>Mature trees, views, and land characteristics</li>
+            <li>Outbuildings, barns, and improvements</li>
+          </ul>
+        </div>
+
+        <p>These factors can significantly impact value and are often missed by automated valuation models.</p>
+
+        <div class="section-title">Request Your Complimentary Home Value Analysis</div>
+
+        <form class="home-value-form" (ngSubmit)="onSubmit()" [formGroup]="form">
+
+          <input type="text" formControlName="name" placeholder="Full Name">
+          @if (form.get('name')?.invalid && form.get('name')?.touched) {
+            <span class="error">Full name is required</span>
+          }
+
+          <input type="text" formControlName="streetAddress" placeholder="Street Address (e.g., 4521 Greenridge Dr)">
+          @if (form.get('streetAddress')?.invalid && form.get('streetAddress')?.touched) {
+            <span class="error">Street address is required</span>
+          }
+
+          <div class="address-row">
+            <input class="city-field" type="text" formControlName="city" placeholder="City">
+            <select class="state-field" formControlName="state" [class.placeholder]="!form.get('state')?.value">
+              <option value="">State</option>
+              @for (s of usStates; track s.code) {
+                <option [value]="s.code">{{ s.code }} – {{ s.name }}</option>
+              }
+            </select>
+            <input class="zip-field" type="text" formControlName="zip" placeholder="ZIP" maxlength="5" inputmode="numeric">
+          </div>
+          <div class="address-errors">
+            @if (form.get('city')?.invalid && form.get('city')?.touched) {
+              <span class="error">City is required</span>
+            } @else {
+              <span></span>
+            }
+            @if (form.get('state')?.invalid && form.get('state')?.touched) {
+              <span class="error">Required</span>
+            } @else {
+              <span></span>
+            }
+            @if (form.get('zip')?.invalid && form.get('zip')?.touched) {
+              <span class="error">5-digit ZIP required</span>
+            } @else {
+              <span></span>
+            }
+          </div>
+
+          @if (addressError) {
+            <span class="error address-api-error">⚠ {{ addressError }}</span>
+          }
+          @if (isValidatingAddress) {
+            <span class="validating-address">Verifying address…</span>
+          }
+
+          <input type="email" formControlName="email" placeholder="Email Address">
+          @if (form.get('email')?.invalid && form.get('email')?.touched) {
+            <span class="error">Valid email is required</span>
+          }
+
+          <input type="tel" formControlName="phone" placeholder="Phone Number (optional)">
+
+          <textarea formControlName="message" rows="4" placeholder="Optional: Anything you'd like me to know about your property"></textarea>
+
+          <button 
+            type="submit" 
+            class="btn-primary" 
+            [disabled]="form.invalid"
+            [title]="form.invalid ? 'Please fill in your name, address, and email to continue' : 'Submit your request'">
+            Request My Home Value Report
+          </button>
+
+          @if (alertMessage) {
+            <div class="form-alert">{{ alertMessage }}</div>
+          }
+
+        </form>
+
+        <p class="trust-line">I do not use tracking cookies or collect any data beyond your message.</p>
+        <a class="back-link" [routerLink]="'/'">← Back to Agent Hub</a>
+
+      </div>
+    </div>
+  </section>
+
+  <app-footer />
+</main>

@@ -1,0 +1,43 @@
+<div class="action-card">
+  <h3>Property Insights & Services</h3>
+  <p class="description">Looking for an official home valuation or want to schedule a walkthrough?</p>
+
+  <div class="button-group" *ngIf="!isRedirecting">
+    <button (click)="redirectToKw('touch')" class="btn-primary" type="button">
+      <span class="icon">💬</span>
+      Get In Touch
+    </button>
+
+    <button (click)="redirectToKw('tour')" class="btn-secondary" type="button">
+      <span class="icon">🏠</span>
+      Request a Tour
+    </button>
+
+    <button (click)="redirectToKw('valuation')" class="btn-accent" type="button">
+      <span class="icon">💰</span>
+      What's My Home Worth?
+    </button>
+  </div>
+
+  <div class="direct-contact">
+    <p class="or-divider">Or reach out directly:</p>
+    <div class="contact-options">
+      <button (click)="sendEmail()" class="btn-link" type="button">
+        ✉️ Email Eric
+      </button>
+      <button (click)="makeCall()" class="btn-link" type="button">
+        📞 Call Now
+      </button>
+    </div>
+  </div>
+
+  <!-- Smooth loading state when redirecting -->
+  <div class="redirect-loader" *ngIf="isRedirecting">
+    <div class="spinner"></div>
+    <p>Opening secure request form on your Keller Williams portal...</p>
+  </div>
+
+  <p class="trust-message">
+    <small>🔒 Your information is secure and handled through Keller Williams' trusted platform</small>
+  </p>
+</div>

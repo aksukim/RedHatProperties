@@ -1,0 +1,81 @@
+/* DELETE this entire block — footer styles live in footer.css */
+/* footer {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  color: #777777;
+  font-size: 14px;
+} */
+
+footer {
+  text-align: center;
+  padding: 1.5rem;
+  background-color: #111 !important;
+  border-top: 2px solid #df000d;
+  color: #a7a9ac !important;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  margin-top: 0;
+}
+
+footer a {
+  color: #a7a9ac !important;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+footer a:hover {
+  color: #fff !important;
+}
+
+.admin-ghost-link {
+  display: block;
+  color: #111 !important;
+  background: transparent;
+  text-decoration: none;
+  font-size: 0.5rem;
+  line-height: 1;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.admin-ghost-link:hover {
+  color: #111 !important;
+}
+
+.footer-line {
+  margin-bottom: 0.9rem;
+  color: #a7a9ac !important;
+}
+
+.disclaimer {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.65rem;
+  color: #666 !important;
+  text-align: center;
+  max-width: 640px;
+  margin-inline: auto;
+  line-height: 1.4;
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+
+.realtor-logo {
+  height: 22px !important;
+  width: auto !important;
+  vertical-align: middle;
+  opacity: 0.85;
+}
+
+.kw-badge {
+  margin-top: 0.6rem;
+}
+
+.kw-footer-logo {
+  height: 24px;
+  width: auto;
+  opacity: 0.85;
+}

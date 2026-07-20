@@ -1,0 +1,167 @@
+<div class="inquiry-container">
+
+  <!-- Tab-style selector (like kw.com) -->
+  <div class="tabs">
+    <button 
+      type="button"
+      (click)="setIntent('touch')" 
+      [class.active]="currentIntent === 'touch'"
+      class="tab-button">
+      💬 Get in Touch
+    </button>
+    <button 
+      type="button"
+      (click)="setIntent('tour')" 
+      [class.active]="currentIntent === 'tour'"
+      class="tab-button">
+      🏠 Request a Tour
+    </button>
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="submitSuccess" class="success-message">
+    <div class="success-icon">✅</div>
+    <h3>Thank You!</h3>
+    <p *ngIf="currentIntent === 'touch'">
+      I'll be in touch with you shortly to discuss your inquiry.
+    </p>
+    <p *ngIf="currentIntent === 'tour'">
+      Your tour request has been received! I'll contact you soon to confirm the details.
+    </p>
+  </div>
+
+  <!-- The Form -->
+  <form [formGroup]="inquiryForm" (ngSubmit)="onSubmit()" *ngIf="!submitSuccess">
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="fullName">Full Name *</label>
+        <input 
+          id="fullName"
+          type="text" 
+          formControlName="fullName" 
+          placeholder="John Doe"
+          [class.error]="inquiryForm.get('fullName')?.invalid && inquiryForm.get('fullName')?.touched">
+        <span class="error-message" *ngIf="inquiryForm.get('fullName')?.touched">
+          {{ getErrorMessage('fullName') }}
+        </span>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="email">Email Address *</label>
+        <input 
+          id="email"
+          type="email" 
+          formControlName="email" 
+          placeholder="john@example.com"
+          [class.error]="inquiryForm.get('email')?.invalid && inquiryForm.get('email')?.touched">
+        <span class="error-message" *ngIf="inquiryForm.get('email')?.touched">
+          {{ getErrorMessage('email') }}
+        </span>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="phone">Phone Number (optional)</label>
+        <input 
+          id="phone"
+          type="tel" 
+          formControlName="phone" 
+          placeholder="(719) 246-6309"
+          [class.error]="inquiryForm.get('phone')?.invalid && inquiryForm.get('phone')?.touched">
+        <span class="error-message" *ngIf="inquiryForm.get('phone')?.touched">
+          {{ getErrorMessage('phone') }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Invisible Honeypot Field - Hidden from real users, bots will fill it -->
+    <input 
+      type="text" 
+      formControlName="midNameVerification" 
+      class="honeypot" 
+      tabindex="-1"
+      autocomplete="off"
+      aria-hidden="true">
+
+    <!-- Tour-specific fields (shown only when intent = 'tour') -->
+    <div *ngIf="currentIntent === 'tour'" class="tour-fields">
+      <div class="form-row two-col">
+        <div class="form-field">
+          <label for="tourDate">Preferred Tour Date *</label>
+          <input 
+            id="tourDate"
+            type="date" 
+            formControlName="tourDate"
+            [min]="getMinDate()"
+            [class.error]="inquiryForm.get('tourDate')?.invalid && inquiryForm.get('tourDate')?.touched">
+          <span class="error-message" *ngIf="inquiryForm.get('tourDate')?.touched">
+            {{ getErrorMessage('tourDate') }}
+          </span>
+        </div>
+
+        <div class="form-field">
+          <label for="tourTime">Preferred Time *</label>
+          <input 
+            id="tourTime"
+            type="time" 
+            formControlName="tourTime"
+            [class.error]="inquiryForm.get('tourTime')?.invalid && inquiryForm.get('tourTime')?.touched">
+          <span class="error-message" *ngIf="inquiryForm.get('tourTime')?.touched">
+            {{ getErrorMessage('tourTime') }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="message">
+          Message * 
+          <span class="hint">(minimum 3 words)</span>
+        </label>
+        <textarea 
+          id="message"
+          formControlName="message" 
+          rows="5"
+          placeholder="Tell me about your needs, timeline, or any questions you have..."
+          [class.error]="inquiryForm.get('message')?.invalid && inquiryForm.get('message')?.touched">
+        </textarea>
+        <span class="error-message" *ngIf="inquiryForm.get('message')?.touched">
+          {{ getErrorMessage('message') }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Property Context (hidden from user, auto-populated) -->
+    <input type="hidden" formControlName="mlsNumber">
+    <input type="hidden" formControlName="propertyAddress">
+    <input type="hidden" formControlName="intent">
+
+    <!-- Error Message -->
+    <div *ngIf="submitError" class="error-banner">
+      {{ submitError }}
+    </div>
+
+    <!-- Submit Button -->
+    <button 
+      type="submit" 
+      class="btn-submit"
+      [disabled]="inquiryForm.invalid || isSubmitting">
+      <span *ngIf="!isSubmitting">
+        {{ currentIntent === 'tour' ? 'Request Tour' : 'Send Message' }} →
+      </span>
+      <span *ngIf="isSubmitting" class="loading">
+        Sending...
+      </span>
+    </button>
+
+    <p class="privacy-note">
+      <small>🔒 Your information is secure and will never be shared with third parties.</small>
+    </p>
+  </form>
+
+</div>

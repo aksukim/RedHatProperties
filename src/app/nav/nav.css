@@ -1,0 +1,123 @@
+/* ── Host: transparent in flex layout so children are direct flex items of .navbar ── */
+:host {
+  display: contents;
+}
+
+/* ── Desktop links ── */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  color: #a7a9ac;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.25rem 0;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: #fff;
+}
+
+.nav-links a.active {
+  color: #df000d;
+  border-bottom: 2px solid #df000d;
+}
+
+/* ── Hamburger ── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.hamburger span {
+  display: block;
+  width: 25px;
+  height: 2px;
+  background-color: #fff;
+  transition: all 0.3s ease;
+}
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .hamburger {
+    display: flex;
+  }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background-color: #111;
+    padding: 1rem 0;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-links li a {
+    display: block;
+    padding: 0.75rem 1.5rem;
+    color: #a7a9ac;
+    border-bottom: 1px solid #444;
+  }
+
+  .nav-links li a:hover {
+    background-color: #444;
+    color: #fff;
+  }
+
+  .nav-links li a.active {
+    color: #df000d;
+    border-bottom: 1px solid #444;
+  }
+}
+
+.contact-btn {
+  background-color: #df000d !important;
+  color: #fff !important;
+  padding: 0.4rem 1rem !important;
+  border-radius: 4px !important;
+  border-bottom: none !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.contact-btn:hover {
+  background-color: #b0000a !important;
+  color: #fff !important;
+}
+
+.btn-primary {
+  background-color: #df000d;
+  color: #fff;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  transition: background-color 0.2s ease;
+  display: inline-block;
+}
+
+.btn-primary:hover {
+  background-color: #b0000a;
+  color: #fff;
+}

@@ -1,0 +1,31 @@
+/* ── Navbar ── */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #111;
+  padding: 0.75rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* ── Brand ── */
+.brand img {
+  display: block;
+  height: 50px;
+  width: auto;
+  transform: scaleX(1.25);
+  transform-origin: left center;
+}
+
+.hero-headline {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  letter-spacing: 0.02em;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+}
