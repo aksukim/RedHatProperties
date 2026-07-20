@@ -50,8 +50,6 @@ Runs at `http://localhost:5000`. The Angular dev server proxies all `/api/*` req
 
 ## Admin Page (`/admin`)
 
-**PIN: 7751**
-
 The hidden link is in the footer of every page (invisible — click at the very bottom).
 
 ### What it does
