@@ -6,6 +6,7 @@
 
 <ul class="nav-links" [class.open]="menuOpen">
   <li><a [routerLink]="'/'" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" (click)="closeMenu()">Home</a></li>
+  <li><a [routerLink]="'/about-me'" routerLinkActive="active" (click)="closeMenu()">About</a></li>
   <li><a [routerLink]="'/black-forest'" routerLinkActive="active" (click)="closeMenu()">Black Forest</a></li>
   <li><a [routerLink]="'/browse-listings'" routerLinkActive="active" (click)="closeMenu()">Browse Listings</a></li>
   <li><a class="contact-btn" [routerLink]="'/contact'">Contact Us</a></li>

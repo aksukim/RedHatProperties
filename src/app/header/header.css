@@ -11,16 +11,34 @@
 }
 
 /* ── Brand ── */
-.brand img {
-  display: block;
-  height: 50px;
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+}
+
+.logo-kw {
+  height: 52px;
   width: auto;
-  transform: scaleX(1.25);
-  transform-origin: left center;
+}
+
+.logo-divider {
+  display: inline-block;
+  width: 1px;
+  height: 38px;
+  background-color: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.logo-rhp {
+  height: 34px;
+  width: auto;
+  opacity: 0.9;
 }
 
 .hero-headline {
-  font-size: 3.5rem;
+  font-size: 2.8rem;
   font-weight: 800;
   color: #ffffff;
   line-height: 1.15;

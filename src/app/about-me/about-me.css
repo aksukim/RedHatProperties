@@ -1,4 +1,5 @@
-.bf-hero {
+/* ── Hero ── */
+.am-hero {
   min-height: 100vh;
   background-size: cover;
   background-position: center;
@@ -8,9 +9,10 @@
   align-items: flex-start;
 }
 
-.bf-hero-overlay {
+.am-hero-overlay {
   position: absolute;
   inset: 0;
+  background: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.2) 100%);
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
@@ -18,7 +20,7 @@
   overflow-y: auto;
 }
 
-.bf-container {
+.am-container {
   max-width: 580px;
   width: 100%;
   padding: 0.5in 3rem 4rem 3rem;
@@ -26,7 +28,8 @@
   z-index: 1;
 }
 
-.bf-eyebrow {
+/* ── Typography ── */
+.am-eyebrow {
   font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -35,7 +38,7 @@
   margin-bottom: 1rem;
 }
 
-.bf-headline {
+.am-headline {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 2.8rem;
   font-weight: 800;
@@ -44,52 +47,25 @@
   margin-bottom: 1.25rem;
 }
 
-.bf-headline .red,
-.bf-section-heading .red {
+.am-headline .red,
+.am-section-heading .red {
   color: #df000d;
 }
 
-.bf-sub {
+.am-sub {
   font-size: 0.95rem;
   color: #d0d0d0;
   line-height: 1.7;
 }
 
-.bf-buttons {
+.am-buttons {
   display: flex;
   gap: 2.5rem;
   margin-top: 1.75rem;
   flex-wrap: wrap;
 }
 
-.bf-divider {
-  border: none;
-  border-top: 1px solid rgba(255,255,255,0.1);
-  margin: 3rem 0;
-}
-
-.bf-section {
-  padding: 5rem 3rem;
-}
-
-.bf-section.dark {
-  background-color: #111;
-}
-
-.bf-section.light {
-  background-color: #1a1a1a;
-}
-
-.bf-content {
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.bf-content.center {
-  text-align: center;
-}
-
-.bf-section-heading {
+.am-section-heading {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 2rem;
   font-weight: 800;
@@ -97,7 +73,7 @@
   margin-bottom: 0.75rem;
 }
 
-.bf-section-sub {
+.am-section-sub {
   font-size: 0.95rem;
   color: #a7a9ac;
   line-height: 1.7;
@@ -113,7 +89,13 @@
   margin-bottom: 0.75rem;
 }
 
-/* ── Bio Cards — single column, 580px (same as TR) ── */
+hr {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  margin: 3rem 0;
+}
+
+/* ── Bio Cards ── */
 .bio-grid {
   display: flex;
   flex-direction: column;
@@ -195,74 +177,6 @@
   color: #ffffff;
 }
 
-/* ── Market Facts ── */
-.market-facts {
-  display: flex;
-  gap: 2rem;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-}
-
-.fact {
-  display: flex;
-  flex-direction: column;
-}
-
-.fact-number {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 2.5rem;
-  font-weight: 800;
-  line-height: 1;
-}
-
-.fact-number.red {
-  color: #df000d;
-}
-
-.fact-label {
-  font-size: 0.7rem;
-  color: #a7a9ac;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-top: 0.25rem;
-}
-
-/* ── Property Types ── */
-.property-types {
-  background-color: rgba(0,0,0,0.45);
-  border-left: 3px solid #df000d;
-  border-radius: 4px;
-  padding: 1.25rem;
-}
-
-.property-types h3 {
-  color: #ffffff;
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 1rem;
-  margin-bottom: 0.75rem;
-}
-
-.property-types ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.property-types ul li {
-  color: #d0d0d0;
-  font-size: 0.88rem;
-  line-height: 1.8;
-  padding-left: 1rem;
-  position: relative;
-}
-
-.property-types ul li::before {
-  content: '→';
-  color: #df000d;
-  position: absolute;
-  left: 0;
-}
-
 /* ── Buttons ── */
 .btn-primary {
   background-color: #df000d;
@@ -299,4 +213,22 @@
 .btn-outline:hover {
   background-color: rgba(255,255,255,0.1);
   border-color: #fff;
+}
+
+/* ── Back Link ── */
+.back-link {
+  display: inline-block;
+  margin-top: 2rem;
+  font-size: 0.8rem;
+  color: #a7a9ac;
+  text-decoration: none;
+  letter-spacing: 0.05em;
+}
+
+.back-link:hover {
+  color: #ffffff;
+}
+
+.red {
+  color: #df000d;
 }

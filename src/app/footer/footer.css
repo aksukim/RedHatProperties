@@ -54,7 +54,7 @@ footer a:hover {
   padding-top: 0.75rem;
   border-top: 1px solid rgba(255,255,255,0.1);
   font-size: 0.65rem;
-  color: #666 !important;
+  color: #a7a9ac !important;
   text-align: center;
   max-width: 640px;
   margin-inline: auto;
@@ -74,8 +74,31 @@ footer a:hover {
   margin-top: 0.6rem;
 }
 
-.kw-footer-logo {
-  height: 24px;
-  width: auto;
-  opacity: 0.85;
+.kw-legal-links {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.65rem;
+  color: #a7a9ac !important;
+  letter-spacing: 0.02em;
+}
+
+.kw-legal-links a {
+  color: #a7a9ac !important;
+  margin: 0 0.25rem;
+}
+
+.kw-legal-links a:hover {
+  color: #fff !important;
+}
+
+.kw-compliance {
+  margin-top: 0.5rem;
+  font-size: 0.62rem;
+  color: #a7a9ac !important;
+  line-height: 1.6;
+  font-style: italic;
+  max-width: 640px;
+  margin-inline: auto;
+  margin-top: 0.5rem;
 }
