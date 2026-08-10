@@ -72,7 +72,7 @@
             <div class="listings-table">
               @for (item of data.active; track item.id; let i = $index) {
                 <div class="listing-row">
-                  <div class="row-thumb" [style.background-image]="'url(' + item.image + ')'"></div>
+                  <div class="row-thumb" [style.background-image]="'url(' + imgUrl(item.image) + ')'"></div>
                   <div class="row-info">
                     <p class="row-address">{{ item.address }}</p>
                     <p class="row-meta">{{ formatPrice(item.price) }}{{ item.mlsNumber ? ' · MLS# ' + item.mlsNumber : '' }}</p>
@@ -96,7 +96,7 @@
             <div class="listings-table">
               @for (item of data.sold; track item.id; let i = $index) {
                 <div class="listing-row">
-                  <div class="row-thumb" [style.background-image]="'url(' + item.image + ')'"></div>
+                  <div class="row-thumb" [style.background-image]="'url(' + imgUrl(item.image) + ')'"></div>
                   <div class="row-info">
                     <p class="row-address">{{ item.address }}</p>
                     <p class="row-meta">Sold {{ item.soldDate }} · {{ formatPrice(item.soldPrice) }}{{ item.mlsNumber ? ' · MLS# ' + item.mlsNumber : '' }}</p>

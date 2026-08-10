@@ -35,7 +35,7 @@
           <div class="listings-grid">
             @for (listing of myListings; track listing.id) {
               <div class="listing-card">
-                <div class="listing-img" [style.background-image]="'url(' + listing.image + ')'">
+                <div class="listing-img" [style.background-image]="'url(' + imgUrl(listing.image) + ')'">
                   <div class="listing-tags">
                     @for (tag of listing.tags; track tag) {
                       <span class="tag">{{ tag }}</span>
@@ -95,7 +95,7 @@
           <div class="listings-grid">
             @for (listing of recentlySold; track listing.id) {
               <div class="listing-card sold-card">
-                <div class="listing-img" [style.background-image]="'url(' + listing.image + ')'">
+                <div class="listing-img" [style.background-image]="'url(' + imgUrl(listing.image) + ')'">
                   <div class="sold-banner">SOLD — {{ listing.soldDate }}</div>
                 </div>
                 <div class="listing-body">

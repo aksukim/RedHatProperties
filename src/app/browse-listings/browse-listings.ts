@@ -62,5 +62,12 @@ export class BrowseListings implements OnInit, AfterViewInit {
     if (!price) return 'Call for Price';
     return '$' + price.toLocaleString();
   }
+
+  /** Ensures image paths are absolute so CSS background-image resolves correctly on any route. */
+  imgUrl(path: string): string {
+    if (!path) return '';
+    if (path.startsWith('/') || path.startsWith('http') || path.startsWith('data:')) return path;
+    return '/' + path;
+  }
 }
 

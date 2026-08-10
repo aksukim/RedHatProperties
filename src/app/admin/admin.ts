@@ -179,6 +179,22 @@ export class Admin implements OnInit {
     } else {
       this.data.sold.splice(index, 1);
     }
+    // Persist the deletion immediately so other pages see the change
+    this.saveMessage = '⏳ Saving…';
+    fetch('/api/listings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_PIN },
+      body: JSON.stringify(this.data)
+    })
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(() => this.ngZone.run(() => {
+      this.saveMessage = '✅ Listing deleted and saved.';
+      setTimeout(() => this.saveMessage = '', 4000);
+    }))
+    .catch(() => this.ngZone.run(() => {
+      this.saveMessage = '⚠️ Deleted locally — click "Save & Download JSON" to persist (API unreachable).';
+      setTimeout(() => this.saveMessage = '', 8000);
+    }));
   }
 
   // ── Download JSON ─────────────────────────────────────────
@@ -257,5 +273,12 @@ export class Admin implements OnInit {
   formatPrice(price: number): string {
     if (!price) return 'Call for Price';
     return '$' + price.toLocaleString();
+  }
+
+  /** Ensures image paths are absolute so CSS background-image resolves correctly on any route. */
+  imgUrl(path: string): string {
+    if (!path) return '';
+    if (path.startsWith('/') || path.startsWith('http') || path.startsWith('data:')) return path;
+    return '/' + path;
   }
 }
