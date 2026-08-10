@@ -6,6 +6,7 @@ import { ListingsService, ListingsData, Listing, SoldListing } from '../services
 // NOTE: Client-side PIN only — move to server-side auth when backend is added.
 // Change this value before deploying.
 const ADMIN_PIN = '7751';
+const LISTINGS_CACHE_KEY = 'rhplListingsData';
 
 @Component({
   selector: 'app-admin',
@@ -41,14 +42,21 @@ export class Admin implements OnInit {
   constructor(private listingsService: ListingsService, private ngZone: NgZone, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
+    const cached = this.loadFromLocal();
+    if (cached) {
+      this.data = cached;
+      this.cdr.detectChanges();
+    }
+
     fetch('/api/listings')
       .then(r => r.ok ? r.json() : Promise.reject())
-      .catch(() => fetch('assets/data/listings.json').then(r => r.json()))
+      .catch(() => cached ? Promise.resolve(cached) : fetch('assets/data/listings.json').then(r => r.json()))
       .then((data: ListingsData) => {
         this.data = {
           active: data?.active ?? [],
           sold: data?.sold ?? []
         };
+        this.saveToLocal();
         this.cdr.detectChanges();
       })
       .catch(() => {
@@ -137,6 +145,7 @@ export class Admin implements OnInit {
         headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_PIN },
         body: JSON.stringify(this.data)
       }).catch(() => {});
+      this.saveToLocal();
     })
     .catch((err: unknown) => {
       this.saveMessage = `⚠️ API unreachable — copy "${file.name}" to src/assets/images/ manually.`;
@@ -167,6 +176,7 @@ export class Admin implements OnInit {
     }
     this.mode = 'list';
     this.activeTab = this.editingType;
+    this.saveToLocal();
   }
 
   deleteEntry(type: 'active' | 'sold', index: number): void {
@@ -179,6 +189,7 @@ export class Admin implements OnInit {
     } else {
       this.data.sold.splice(index, 1);
     }
+    this.saveToLocal();
     // Persist the deletion immediately so other pages see the change
     this.saveMessage = '⏳ Saving…';
     this.cdr.detectChanges();
@@ -243,6 +254,7 @@ export class Admin implements OnInit {
             return;
           }
           this.data = data;
+          this.saveToLocal();
           this.saveMessage = `✅ Imported ${data.active.length} active + ${data.sold.length} sold. Click "Save CSV" to download the updated file.`;
         } catch (err) {
           this.saveMessage = `❌ Import failed: ${err}`;
@@ -283,5 +295,23 @@ export class Admin implements OnInit {
     if (!path) return '';
     if (path.startsWith('/') || path.startsWith('http') || path.startsWith('data:')) return path;
     return '/' + path;
+  }
+
+  private loadFromLocal(): ListingsData | null {
+    try {
+      const raw = localStorage.getItem(LISTINGS_CACHE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw) as Partial<ListingsData>;
+      return {
+        active: Array.isArray(parsed.active) ? parsed.active as Listing[] : [],
+        sold: Array.isArray(parsed.sold) ? parsed.sold as SoldListing[] : []
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  private saveToLocal(): void {
+    localStorage.setItem(LISTINGS_CACHE_KEY, JSON.stringify(this.data));
   }
 }
