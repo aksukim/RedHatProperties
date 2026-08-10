@@ -181,20 +181,23 @@ export class Admin implements OnInit {
     }
     // Persist the deletion immediately so other pages see the change
     this.saveMessage = '⏳ Saving…';
+    this.cdr.detectChanges();
     fetch('/api/listings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_PIN },
       body: JSON.stringify(this.data)
     })
     .then(r => r.ok ? r.json() : Promise.reject(r.status))
-    .then(() => this.ngZone.run(() => {
+    .then(() => {
       this.saveMessage = '✅ Listing deleted and saved.';
-      setTimeout(() => this.saveMessage = '', 4000);
-    }))
-    .catch(() => this.ngZone.run(() => {
+      this.cdr.detectChanges();
+      setTimeout(() => { this.saveMessage = ''; this.cdr.detectChanges(); }, 4000);
+    })
+    .catch(() => {
       this.saveMessage = '⚠️ Deleted locally — click "Save & Download JSON" to persist (API unreachable).';
-      setTimeout(() => this.saveMessage = '', 8000);
-    }));
+      this.cdr.detectChanges();
+      setTimeout(() => { this.saveMessage = ''; this.cdr.detectChanges(); }, 8000);
+    });
   }
 
   // ── Download JSON ─────────────────────────────────────────
