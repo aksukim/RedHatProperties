@@ -46,11 +46,12 @@ export class Admin implements OnInit {
     if (cached) {
       this.data = cached;
       this.cdr.detectChanges();
+      return;
     }
 
     fetch('/api/listings')
       .then(r => r.ok ? r.json() : Promise.reject())
-      .catch(() => cached ? Promise.resolve(cached) : fetch('assets/data/listings.json').then(r => r.json()))
+      .catch(() => fetch('assets/data/listings.json').then(r => r.json()))
       .then((data: ListingsData) => {
         this.data = {
           active: data?.active ?? [],

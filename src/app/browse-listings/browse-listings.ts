@@ -44,11 +44,12 @@ export class BrowseListings implements OnInit, AfterViewInit {
       this.recentlySold = cached.sold;
       this.loaded = true;
       this.cdr.detectChanges();
+      return;
     }
 
     fetch('/api/listings')
       .then(r => r.ok ? r.json() : Promise.reject())
-      .catch(() => cached ? Promise.resolve(cached) : fetch('assets/data/listings.json').then(r => r.json()))
+      .catch(() => fetch('assets/data/listings.json').then(r => r.json()))
       .then(data => {
         this.myListings = (data?.active ?? []) as Listing[];
         this.recentlySold = (data?.sold ?? []) as SoldListing[];
