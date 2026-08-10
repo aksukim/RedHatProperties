@@ -76,8 +76,15 @@ export class BrowseListings implements OnInit, AfterViewInit {
   /** Ensures image paths are absolute so CSS background-image resolves correctly on any route. */
   imgUrl(path: string): string {
     if (!path) return '';
-    if (path.startsWith('/') || path.startsWith('http') || path.startsWith('data:')) return path;
-    return '/' + path;
+    if (path.startsWith('http') || path.startsWith('data:')) return path;
+    if (path.startsWith('/')) return path;
+    return this.appBasePath() + path;
+  }
+
+  private appBasePath(): string {
+    const pathname = window.location.pathname;
+    const lastSlash = pathname.lastIndexOf('/');
+    return lastSlash >= 0 ? pathname.slice(0, lastSlash + 1) : '/';
   }
 
   private loadFromLocal(): { active: Listing[]; sold: SoldListing[] } | null {
