@@ -1,0 +1,44 @@
+<main class="page">
+  <app-header />
+
+  <section class="reviews-hero" style="background-image: url('assets/images/BF4.jpg')">
+    <div class="reviews-overlay">
+      <div class="reviews-container">
+
+        <p class="eyebrow">CLIENT TESTIMONIALS</p>
+        <h1>Customer <span class="red">Reviews</span></h1>
+        <p class="intro">Real feedback from buyers and sellers who worked with Red Hat Properties.</p>
+
+        <div class="reviews-grid">
+          <article class="review-card">
+            <p class="stars">★★★★★</p>
+            <p class="quote">"Eric made our move from out of state feel easy. He was responsive, detail-oriented, and advocated for us during negotiations."</p>
+            <p class="author">- Military Relocation Buyer</p>
+          </article>
+
+          <article class="review-card">
+            <p class="stars">★★★★★</p>
+            <p class="quote">"From pricing strategy to close, the entire process was organized and professional. We sold quickly and at a great price."</p>
+            <p class="author">- Black Forest Seller</p>
+          </article>
+
+          <article class="review-card">
+            <p class="stars">★★★★★</p>
+            <p class="quote">"We needed someone who understood acreage properties and horse facilities. Eric absolutely delivered and kept us informed every step."</p>
+            <p class="author">- Horse Property Buyer</p>
+          </article>
+        </div>
+
+        <div class="cta">
+          <h2>Ready to Work Together?</h2>
+          <p>Let's talk about your goals and build the right strategy for your next move.</p>
+          <a class="btn-primary" [routerLink]="'/contact'">Contact Eric -></a>
+        </div>
+
+        <a class="back-link" [routerLink]="'/'"><- Back to Home</a>
+      </div>
+    </div>
+  </section>
+
+  <app-footer />
+</main>
