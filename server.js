@@ -1,0 +1,137 @@
+/**
+ * Red Hat Properties - API Server
+ * Handles /api/listings (GET/POST) and /api/listings/image (POST)
+ * Stores listing data in MongoDB Atlas.
+ *
+ * Usage:
+ *   node server.js
+ *
+ * Requires a .env file in this folder with:
+ *   MONGODB_URI=mongodb+srv://<user>:<password>@...
+ *   ADMIN_KEY=7751
+ *   PORT=5000
+ *   IMAGES_DIR=C:\inetpub\wwwroot\RedHat\assets\images
+ */
+
+require('dotenv').config();
+
+const express  = require('express');
+const cors     = require('cors');
+const multer   = require('multer');
+const path     = require('path');
+const fs       = require('fs');
+const { MongoClient } = require('mongodb');
+
+const app       = express();
+const PORT      = process.env.PORT || 5000;
+const ADMIN_KEY = process.env.ADMIN_KEY || '7751';
+const MONGODB_URI = process.env.MONGODB_URI;
+const DB_NAME   = process.env.DB_NAME || 'redhatproperties';
+const IMAGES_DIR = process.env.IMAGES_DIR || path.join(__dirname, 'src', 'assets', 'images');
+
+if (!MONGODB_URI) {
+  console.error('❌  MONGODB_URI is not set in .env — exiting.');
+  process.exit(1);
+}
+
+// ── Ensure images folder exists ───────────────────────────
+if (!fs.existsSync(IMAGES_DIR)) {
+  fs.mkdirSync(IMAGES_DIR, { recursive: true });
+}
+
+// ── MongoDB client ────────────────────────────────────────
+const client = new MongoClient(MONGODB_URI);
+let listingsCol;
+
+async function connectDb() {
+  await client.connect();
+  const db = client.db(DB_NAME);
+  listingsCol = db.collection('listings');
+  // Seed from static JSON if collection is empty
+  const count = await listingsCol.countDocuments();
+  if (count === 0) {
+    const seedPath = path.join(__dirname, 'src', 'assets', 'data', 'listings.json');
+    if (fs.existsSync(seedPath)) {
+      const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
+      await listingsCol.insertOne({ _id: 'main', ...seed });
+      console.log('✅  Seeded listings from static JSON.');
+    }
+  }
+  console.log(`✅  Connected to MongoDB (${DB_NAME})`);
+}
+
+// ── Middleware ────────────────────────────────────────────
+app.use(cors());
+app.use(express.json({ limit: '2mb' }));
+
+function requireAdminKey(req, res, next) {
+  if (req.headers['x-admin-key'] !== ADMIN_KEY) {
+    return res.status(401).json({ error: 'Unauthorised' });
+  }
+  next();
+}
+
+// ── File upload config ────────────────────────────────────
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, IMAGES_DIR),
+  filename: (_req, file, cb) => {
+    const safe = path.basename(file.originalname).replace(/[^a-zA-Z0-9._-]/g, '_');
+    cb(null, safe);
+  }
+});
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const allowed = /jpeg|jpg|png|gif|webp/i;
+    if (allowed.test(path.extname(file.originalname))) return cb(null, true);
+    cb(new Error('Only image files are allowed'));
+  }
+});
+
+// ── Routes ────────────────────────────────────────────────
+
+// GET /api/listings
+app.get('/api/listings', async (_req, res) => {
+  try {
+    const doc = await listingsCol.findOne({ _id: 'main' });
+    if (!doc) return res.json({ active: [], sold: [] });
+    res.json({ active: doc.active ?? [], sold: doc.sold ?? [] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to load listings' });
+  }
+});
+
+// POST /api/listings — save full listings (admin only)
+app.post('/api/listings', requireAdminKey, async (req, res) => {
+  try {
+    const { active = [], sold = [] } = req.body;
+    await listingsCol.replaceOne(
+      { _id: 'main' },
+      { _id: 'main', active, sold },
+      { upsert: true }
+    );
+    res.json({ message: 'Listings saved.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to save listings' });
+  }
+});
+
+// POST /api/listings/image — upload image (admin only)
+app.post('/api/listings/image', requireAdminKey, upload.single('file'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file received' });
+  res.json({
+    filename: req.file.filename,
+    path: `assets/images/${req.file.filename}`
+  });
+});
+
+// ── Start ─────────────────────────────────────────────────
+connectDb().then(() => {
+  app.listen(PORT, () => console.log(`🚀  API server running on http://localhost:${PORT}`));
+}).catch(err => {
+  console.error('❌  MongoDB connection failed:', err.message);
+  process.exit(1);
+});
