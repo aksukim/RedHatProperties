@@ -8,7 +8,6 @@ import { Footer } from '../footer/footer';
 import { ListingsService, Listing, SoldListing } from '../services/listings.service';
 
 export type { Listing, SoldListing };
-const LISTINGS_CACHE_KEY = 'rhplListingsData';
 
 @Component({
   selector: 'app-browse-listings',
@@ -38,15 +37,6 @@ export class BrowseListings implements OnInit, AfterViewInit {
   loaded = false;
 
   ngOnInit(): void {
-    const cached = this.loadFromLocal();
-    if (cached) {
-      this.myListings = cached.active;
-      this.recentlySold = cached.sold;
-      this.loaded = true;
-      this.cdr.detectChanges();
-      return;
-    }
-
     fetch('/api/listings')
       .then(r => r.ok ? r.json() : Promise.reject())
       .catch(() => fetch('assets/data/listings.json').then(r => r.json()))
@@ -54,7 +44,6 @@ export class BrowseListings implements OnInit, AfterViewInit {
         this.myListings = (data?.active ?? []) as Listing[];
         this.recentlySold = (data?.sold ?? []) as SoldListing[];
         this.loaded = true;
-        this.saveToLocal();
         this.cdr.detectChanges();
       })
       .catch(() => {
@@ -88,25 +77,5 @@ export class BrowseListings implements OnInit, AfterViewInit {
     return lastSlash >= 0 ? pathname.slice(0, lastSlash + 1) : '/';
   }
 
-  private loadFromLocal(): { active: Listing[]; sold: SoldListing[] } | null {
-    try {
-      const raw = localStorage.getItem(LISTINGS_CACHE_KEY);
-      if (!raw) return null;
-      const parsed = JSON.parse(raw) as { active?: Listing[]; sold?: SoldListing[] };
-      return {
-        active: Array.isArray(parsed.active) ? parsed.active : [],
-        sold: Array.isArray(parsed.sold) ? parsed.sold : []
-      };
-    } catch {
-      return null;
-    }
-  }
-
-  private saveToLocal(): void {
-    localStorage.setItem(LISTINGS_CACHE_KEY, JSON.stringify({
-      active: this.myListings,
-      sold: this.recentlySold
-    }));
-  }
 }
 
