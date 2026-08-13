@@ -22,7 +22,8 @@ export class Admin implements OnInit {
 
   // ── Data ──────────────────────────────────────────────────
   data: ListingsData = { active: [], sold: [] };
-  activeTab: 'active' | 'sold' = 'active';
+  activeTab: 'active' | 'sold' | 'reviews' = 'active';
+  pendingReviews: { _id: string; name: string; rating: number; comment: string }[] = [];
 
   // ── Edit state ────────────────────────────────────────────
   mode: 'list' | 'edit' = 'list';
@@ -200,61 +201,6 @@ export class Admin implements OnInit {
     });
   }
 
-  // ── Download JSON ─────────────────────────────────────────
-  // ── Save JSON (updates the site's data source) ───────────
-  exportCsv(): void {
-    if (this.data.active.length === 0 && this.data.sold.length === 0) {
-      this.saveMessage = '⚠️ Data not loaded yet — wait a moment and try again.';
-      setTimeout(() => this.saveMessage = '', 5000);
-      return;
-    }
-    this.saveMessage = '⏳ Saving to server…';
-    fetch('/api/listings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_PIN },
-      body: JSON.stringify(this.data)
-    })
-    .then(r => r.ok ? r.json() : Promise.reject(r.status))
-    .then(() => this.ngZone.run(() => {
-      this.saveMessage = '✅ Listings saved to server!';
-      setTimeout(() => this.saveMessage = '', 6000);
-    }))
-    .catch(() => this.ngZone.run(() => {
-      this.listingsService.downloadJson(this.data);
-      this.saveMessage = '⚠️ API unreachable — listings.json downloaded. Replace src/assets/data/listings.json manually.';
-      setTimeout(() => this.saveMessage = '', 10000);
-    }));
-  }
-
-  // ── Import CSV ────────────────────────────────────────────
-  importCsv(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-      this.ngZone.run(() => {
-        try {
-          const text = e.target?.result as string;
-          if (!text?.trim()) { this.saveMessage = '❌ File is empty.'; return; }
-          const data = this.listingsService.parseCsvToListings(text);
-          if (data.active.length === 0 && data.sold.length === 0) {
-            this.saveMessage = '❌ No listings found. Check your CSV has a "type" column with "active"/"sold" values.';
-            return;
-          }
-          this.data = data;
-          this.saveMessage = `✅ Imported ${data.active.length} active + ${data.sold.length} sold. Click "Save CSV" to download the updated file.`;
-        } catch (err) {
-          this.saveMessage = `❌ Import failed: ${err}`;
-        }
-        setTimeout(() => this.saveMessage = '', 10000);
-        input.value = '';
-      });
-    };
-    reader.onerror = () => this.ngZone.run(() => { this.saveMessage = '❌ Could not read the file.'; });
-    reader.readAsText(file);
-  }
-
   // ── Helpers ───────────────────────────────────────────────
   private blankActive(): Listing {
     return {
@@ -290,6 +236,51 @@ export class Admin implements OnInit {
     const pathname = window.location.pathname;
     const lastSlash = pathname.lastIndexOf('/');
     return lastSlash >= 0 ? pathname.slice(0, lastSlash + 1) : '/';
+  }
+
+  // ── Reviews ───────────────────────────────────────────────
+  loadPendingReviews(): void {
+    this.activeTab = 'reviews';
+    fetch('/api/reviews/pending', { headers: { 'X-Admin-Key': ADMIN_PIN } })
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(data => {
+        this.pendingReviews = data;
+        this.cdr.detectChanges();
+      })
+      .catch(() => {
+        this.pendingReviews = [];
+        this.cdr.detectChanges();
+      });
+  }
+
+  reviewStars(n: number): string {
+    return '★'.repeat(n) + '☆'.repeat(5 - n);
+  }
+
+  approveReview(id: string): void {
+    fetch(`/api/reviews/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_PIN },
+      body: JSON.stringify({ status: 'approved' })
+    }).then(() => {
+      this.pendingReviews = this.pendingReviews.filter(r => r._id !== id);
+      this.saveMessage = '✅ Review approved.';
+      this.cdr.detectChanges();
+      setTimeout(() => { this.saveMessage = ''; this.cdr.detectChanges(); }, 3000);
+    });
+  }
+
+  rejectReview(id: string): void {
+    fetch(`/api/reviews/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_PIN },
+      body: JSON.stringify({ status: 'rejected' })
+    }).then(() => {
+      this.pendingReviews = this.pendingReviews.filter(r => r._id !== id);
+      this.saveMessage = '🗑 Review rejected.';
+      this.cdr.detectChanges();
+      setTimeout(() => { this.saveMessage = ''; this.cdr.detectChanges(); }, 3000);
+    });
   }
 
 }

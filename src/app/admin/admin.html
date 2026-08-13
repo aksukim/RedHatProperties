@@ -6,7 +6,7 @@
       <div class="pin-card">
         <img src="assets/images/LogoHat.jpg" alt="Red Hat Properties" class="pin-logo">
         <h1>Admin Access</h1>
-        <p class="pin-sub">Listings Manager · Red Hat Properties</p>
+        <p class="pin-sub">Site Manager · Red Hat Properties</p>
         <div class="pin-row">
           <input
             type="password"
@@ -34,15 +34,12 @@
         <div class="admin-header-left">
           <img src="assets/images/LogoHat.jpg" alt="Red Hat Properties" class="admin-logo">
           <div>
-            <h1>Listings Manager</h1>
+            <h1>Site Manager</h1>
             <span class="admin-sub">Red Hat Properties</span>
           </div>
         </div>
         <div class="admin-header-right">
           <a [routerLink]="'/browse-listings'" class="btn-view-site">← View Site</a>
-          <button class="btn-csv-export" (click)="importCsvInput.click()">↧ Import CSV</button>
-          <input #importCsvInput type="file" accept=".csv" style="display:none" (change)="importCsv($event)">
-          <button class="btn-download" (click)="exportCsv()">⬇ Save &amp; Download JSON</button>
         </div>
       </div>
 
@@ -60,6 +57,9 @@
           </button>
           <button class="tab-btn" [class.active]="activeTab === 'sold'" (click)="activeTab = 'sold'">
             Recently Sold <span class="tab-count">{{ data.sold.length }}</span>
+          </button>
+          <button class="tab-btn" [class.active]="activeTab === 'reviews'" (click)="loadPendingReviews()">
+            Reviews <span class="tab-count">{{ pendingReviews.length }}</span>
           </button>
         </div>
 
@@ -109,6 +109,26 @@
               }
               @empty {
                 <p class="empty-state">No sold listings yet.</p>
+              }
+            </div>
+          }
+
+          @if (activeTab === 'reviews') {
+            <div class="listings-table">
+              @for (r of pendingReviews; track r._id) {
+                <div class="listing-row review-row">
+                  <div class="row-info">
+                    <p class="row-address">{{ r.name }} &mdash; {{ reviewStars(r.rating) }}</p>
+                    <p class="row-meta review-comment">{{ r.comment }}</p>
+                  </div>
+                  <div class="row-actions">
+                    <button class="btn-edit" (click)="approveReview(r._id)">Approve</button>
+                    <button class="btn-delete" (click)="rejectReview(r._id)">Reject</button>
+                  </div>
+                </div>
+              }
+              @empty {
+                <p class="empty-state">No pending reviews.</p>
               }
             </div>
           }

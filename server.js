@@ -42,11 +42,13 @@ if (!fs.existsSync(IMAGES_DIR)) {
 // ── MongoDB client ────────────────────────────────────────
 const client = new MongoClient(MONGODB_URI);
 let listingsCol;
+let reviewsCol;
 
 async function connectDb() {
   await client.connect();
   const db = client.db(DB_NAME);
   listingsCol = db.collection('listings');
+  reviewsCol  = db.collection('reviews');
   // Seed from static JSON if collection is empty
   const count = await listingsCol.countDocuments();
   if (count === 0) {
@@ -126,6 +128,92 @@ app.post('/api/listings/image', requireAdminKey, upload.single('file'), (req, re
     filename: req.file.filename,
     path: `assets/images/${req.file.filename}`
   });
+});
+
+// ── Reviews ───────────────────────────────────────────────
+
+// GET /api/reviews — public, returns only approved reviews
+app.get('/api/reviews', async (_req, res) => {
+  try {
+    const reviews = await reviewsCol
+      .find({ status: 'approved' })
+      .sort({ createdAt: -1 })
+      .toArray();
+    res.json(reviews);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to load reviews' });
+  }
+});
+
+// GET /api/reviews/pending — admin only, returns pending reviews
+app.get('/api/reviews/pending', requireAdminKey, async (_req, res) => {
+  try {
+    const reviews = await reviewsCol
+      .find({ status: 'pending' })
+      .sort({ createdAt: -1 })
+      .toArray();
+    res.json(reviews);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to load pending reviews' });
+  }
+});
+
+// POST /api/reviews — public submission
+app.post('/api/reviews', async (req, res) => {
+  try {
+    const { name, rating, comment } = req.body;
+    if (!name?.trim() || !comment?.trim() || !rating) {
+      return res.status(400).json({ error: 'Name, rating, and comment are required.' });
+    }
+    const ratingNum = parseInt(rating, 10);
+    if (ratingNum < 1 || ratingNum > 5) {
+      return res.status(400).json({ error: 'Rating must be between 1 and 5.' });
+    }
+    await reviewsCol.insertOne({
+      name: name.trim().slice(0, 100),
+      rating: ratingNum,
+      comment: comment.trim().slice(0, 1000),
+      status: 'pending',
+      createdAt: new Date()
+    });
+    res.json({ message: 'Review submitted. It will appear after approval.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to submit review' });
+  }
+});
+
+// PATCH /api/reviews/:id — approve or reject (admin only)
+app.patch('/api/reviews/:id', requireAdminKey, async (req, res) => {
+  try {
+    const { ObjectId } = require('mongodb');
+    const { status } = req.body;
+    if (!['approved', 'rejected'].includes(status)) {
+      return res.status(400).json({ error: 'Status must be approved or rejected.' });
+    }
+    await reviewsCol.updateOne(
+      { _id: new ObjectId(req.params.id) },
+      { $set: { status } }
+    );
+    res.json({ message: `Review ${status}.` });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update review' });
+  }
+});
+
+// DELETE /api/reviews/:id — admin only
+app.delete('/api/reviews/:id', requireAdminKey, async (req, res) => {
+  try {
+    const { ObjectId } = require('mongodb');
+    await reviewsCol.deleteOne({ _id: new ObjectId(req.params.id) });
+    res.json({ message: 'Review deleted.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete review' });
+  }
 });
 
 // ── Start ─────────────────────────────────────────────────

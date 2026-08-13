@@ -1,0 +1,82 @@
+<main class="page">
+  <app-header />
+
+  <section class="reviews-hero" style="background-image: url('assets/images/BF4.jpg')">
+    <div class="reviews-overlay">
+      <div class="reviews-container">
+
+        <p class="eyebrow">CLIENT TESTIMONIALS</p>
+        <h1>Customer <span class="red">Reviews</span></h1>
+        <p class="intro">Real feedback from buyers and sellers who worked with Red Hat Properties.</p>
+
+        @if (!loaded) {
+          <div class="loading">Loading reviews…</div>
+        }
+
+        @if (loaded && reviews.length === 0) {
+          <div class="no-reviews">No approved reviews yet. Be the first to leave one below!</div>
+        }
+
+        @if (reviews.length > 0) {
+          <div class="reviews-grid">
+            @for (r of reviews; track r._id) {
+              <article class="review-card">
+                <p class="stars">{{ stars(r.rating) }}</p>
+                <p class="quote">"{{ r.comment }}"</p>
+                <p class="author">— {{ r.name }}</p>
+              </article>
+            }
+          </div>
+        }
+
+        <hr class="section-divider">
+
+        <!-- ── Submit a Review ── -->
+        <div class="submit-section">
+          <h2>Leave a <span class="red">Review</span></h2>
+          <p class="intro">Share your experience working with Eric. Reviews are reviewed before being published.</p>
+
+          <div class="review-form">
+            <div class="form-row">
+              <label>Your Name</label>
+              <input type="text" [(ngModel)]="formName" placeholder="First name or initials" maxlength="100">
+            </div>
+            <div class="form-row">
+              <label>Rating</label>
+              <select [(ngModel)]="formRating">
+                <option [value]="5">&#9733;&#9733;&#9733;&#9733;&#9733; — Excellent</option>
+                <option [value]="4">&#9733;&#9733;&#9733;&#9733;&#9734; — Very Good</option>
+                <option [value]="3">&#9733;&#9733;&#9733;&#9734;&#9734; — Good</option>
+                <option [value]="2">&#9733;&#9733;&#9734;&#9734;&#9734; — Fair</option>
+                <option [value]="1">&#9733;&#9734;&#9734;&#9734;&#9734; — Poor</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>Your Review</label>
+              <textarea [(ngModel)]="formComment" rows="4" placeholder="Tell us about your experience…" maxlength="1000"></textarea>
+            </div>
+            @if (submitMessage) {
+              <p class="submit-msg">{{ submitMessage }}</p>
+            }
+            <button class="btn-submit" (click)="submitReview()" [disabled]="submitting">
+              {{ submitting ? 'Submitting…' : 'Submit Review' }}
+            </button>
+          </div>
+        </div>
+
+        <hr class="section-divider">
+
+        <div class="cta">
+          <h2>Ready to Work Together?</h2>
+          <p>Let's talk about your goals and build the right strategy for your next move.</p>
+          <a class="btn-primary" [routerLink]="'/contact'">Contact Eric &rarr;</a>
+        </div>
+
+        <a class="back-link" [routerLink]="'/'">&#8592; Back to Home</a>
+
+      </div>
+    </div>
+  </section>
+
+  <app-footer />
+</main>
