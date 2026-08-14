@@ -7,6 +7,7 @@ import { Footer } from '../footer/footer';
 interface Review {
   _id: string;
   name: string;
+  email?: string;
   rating: number;
   comment: string;
   createdAt: string;
@@ -24,8 +25,10 @@ export class CustomerReviews implements OnInit {
 
   // Submission form
   formName = '';
+  formEmail = '';
   formRating = 5;
   formComment = '';
+  formConsent = false;
   submitMessage = '';
   submitting = false;
 
@@ -49,6 +52,12 @@ export class CustomerReviews implements OnInit {
     return '★'.repeat(n) + '☆'.repeat(5 - n);
   }
 
+  /** Returns the part of the email before the @ for display */
+  emailPrefix(email: string | undefined): string {
+    if (!email) return '';
+    return email.split('@')[0];
+  }
+
   submitReview(): void {
     if (!this.formName.trim() || !this.formComment.trim()) {
       this.submitMessage = '⚠️ Please fill in your name and comment.';
@@ -60,14 +69,16 @@ export class CustomerReviews implements OnInit {
     fetch('/api/reviews', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: this.formName, rating: this.formRating, comment: this.formComment })
+      body: JSON.stringify({ name: this.formName, email: this.formEmail, rating: this.formRating, comment: this.formComment, emailConsent: this.formConsent })
     })
     .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e.error)))
     .then(() => {
       this.submitMessage = '✅ Thank you! Your review has been submitted and will appear after approval.';
       this.formName = '';
+      this.formEmail = '';
       this.formRating = 5;
       this.formComment = '';
+      this.formConsent = false;
       this.submitting = false;
       this.cdr.detectChanges();
     })

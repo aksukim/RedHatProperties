@@ -7,6 +7,24 @@
   font-size: 0.9rem;
 }
 
+/* ── Review status badge ── */
+.review-status {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+.status-pending  { background: #7a5c00; color: #ffd966; }
+.status-approved { background: #1a4d1a; color: #7fff7f; }
+.status-rejected { background: #4d1a1a; color: #ff9999; }
+
+.review-comment { font-style: italic; color: #a0a0a0; }
+
 /* ── PIN Gate ── */
 .pin-gate {
   display: flex;

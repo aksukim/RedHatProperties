@@ -23,7 +23,7 @@
               <article class="review-card">
                 <p class="stars">{{ stars(r.rating) }}</p>
                 <p class="quote">"{{ r.comment }}"</p>
-                <p class="author">— {{ r.name }}</p>
+                <p class="author">— {{ r.name }}@if (r.email) { <span class="review-email">({{ emailPrefix(r.email) }})</span> }</p>
               </article>
             }
           </div>
@@ -42,6 +42,10 @@
               <input type="text" [(ngModel)]="formName" placeholder="First name or initials" maxlength="100">
             </div>
             <div class="form-row">
+              <label>Email Address <span class="field-optional">(optional — kept private)</span></label>
+              <input type="email" [(ngModel)]="formEmail" placeholder="you@example.com" maxlength="200">
+            </div>
+            <div class="form-row">
               <label>Rating</label>
               <select [(ngModel)]="formRating">
                 <option [value]="5">&#9733;&#9733;&#9733;&#9733;&#9733; — Excellent</option>
@@ -54,6 +58,13 @@
             <div class="form-row">
               <label>Your Review</label>
               <textarea [(ngModel)]="formComment" rows="4" placeholder="Tell us about your experience…" maxlength="1000"></textarea>
+            </div>
+            <div class="form-disclaimer">
+              <p>By submitting this review, you confirm it is your honest opinion based on your personal experience. Red Hat Properties reserves the right to approve or decline any submission. Your personal information will not be shared with third parties.</p>
+              <label class="consent-label">
+                <input type="checkbox" [(ngModel)]="formConsent">
+                <span>I agree to receive occasional email updates about new listings and market news from Red Hat Properties. (Optional)</span>
+              </label>
             </div>
             @if (submitMessage) {
               <p class="submit-msg">{{ submitMessage }}</p>

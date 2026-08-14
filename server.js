@@ -146,17 +146,17 @@ app.get('/api/reviews', async (_req, res) => {
   }
 });
 
-// GET /api/reviews/pending — admin only, returns pending reviews
-app.get('/api/reviews/pending', requireAdminKey, async (_req, res) => {
+// GET /api/reviews/all — admin only, returns all reviews with status
+app.get('/api/reviews/all', requireAdminKey, async (_req, res) => {
   try {
     const reviews = await reviewsCol
-      .find({ status: 'pending' })
+      .find({})
       .sort({ createdAt: -1 })
       .toArray();
     res.json(reviews);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to load pending reviews' });
+    res.status(500).json({ error: 'Failed to load reviews' });
   }
 });
 
@@ -164,6 +164,8 @@ app.get('/api/reviews/pending', requireAdminKey, async (_req, res) => {
 app.post('/api/reviews', async (req, res) => {
   try {
     const { name, rating, comment } = req.body;
+    const email = req.body.email ?? '';
+    const emailConsent = req.body.emailConsent === true;
     if (!name?.trim() || !comment?.trim() || !rating) {
       return res.status(400).json({ error: 'Name, rating, and comment are required.' });
     }
@@ -173,6 +175,8 @@ app.post('/api/reviews', async (req, res) => {
     }
     await reviewsCol.insertOne({
       name: name.trim().slice(0, 100),
+      email: email.trim().slice(0, 200),
+      emailConsent,
       rating: ratingNum,
       comment: comment.trim().slice(0, 1000),
       status: 'pending',

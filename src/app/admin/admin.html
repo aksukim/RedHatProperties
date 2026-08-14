@@ -118,17 +118,29 @@
               @for (r of pendingReviews; track r._id) {
                 <div class="listing-row review-row">
                   <div class="row-info">
-                    <p class="row-address">{{ r.name }} &mdash; {{ reviewStars(r.rating) }}</p>
+                    <p class="row-address">
+                      {{ r.name }} &mdash; {{ reviewStars(r.rating) }}
+                      <span class="review-status" [class]="'status-' + r.status">{{ r.status }}</span>
+                    </p>
+                    <p class="row-meta">
+                      @if (r.email) { <span>📧 {{ emailPrefix(r.email) }}</span> }
+                      &nbsp;|&nbsp; Email consent: <strong>{{ r.emailConsent ? 'Y' : 'N' }}</strong>
+                    </p>
                     <p class="row-meta review-comment">{{ r.comment }}</p>
                   </div>
                   <div class="row-actions">
-                    <button class="btn-edit" (click)="approveReview(r._id)">Approve</button>
-                    <button class="btn-delete" (click)="rejectReview(r._id)">Reject</button>
+                    @if (r.status !== 'approved') {
+                      <button class="btn-edit" (click)="approveReview(r._id)">Approve</button>
+                    }
+                    @if (r.status !== 'rejected') {
+                      <button class="btn-delete" (click)="rejectReview(r._id)">Reject</button>
+                    }
+                    <button class="btn-delete" (click)="deleteReview(r._id, r.name)" style="background:#7a0000">Delete</button>
                   </div>
                 </div>
               }
               @empty {
-                <p class="empty-state">No pending reviews.</p>
+                <p class="empty-state">No reviews yet.</p>
               }
             </div>
           }
