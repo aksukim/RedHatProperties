@@ -181,6 +181,47 @@ h1 {
   font-size: 0.9rem;
 }
 
+.field-optional {
+  color: #a0a0a0;
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+.review-email {
+  color: #a0a0a0;
+  font-size: 0.78rem;
+  font-weight: 400;
+}
+
+.form-disclaimer {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 0.85rem;
+  font-size: 0.8rem;
+  color: #a0a0a0;
+  line-height: 1.6;
+}
+
+.form-disclaimer p {
+  margin-bottom: 0.65rem;
+}
+
+.consent-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: #d0d0d0;
+}
+
+.consent-label input[type="checkbox"] {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+  accent-color: #df000d;
+  width: auto;
+}
+
 .btn-submit {
   align-self: flex-start;
   background: #df000d;

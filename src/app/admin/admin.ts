@@ -23,7 +23,7 @@ export class Admin implements OnInit {
   // ── Data ──────────────────────────────────────────────────
   data: ListingsData = { active: [], sold: [] };
   activeTab: 'active' | 'sold' | 'reviews' = 'active';
-  pendingReviews: { _id: string; name: string; rating: number; comment: string }[] = [];
+  pendingReviews: { _id: string; name: string; email?: string; emailConsent?: boolean; rating: number; comment: string; status: string }[] = [];
 
   // ── Edit state ────────────────────────────────────────────
   mode: 'list' | 'edit' = 'list';
@@ -241,7 +241,7 @@ export class Admin implements OnInit {
   // ── Reviews ───────────────────────────────────────────────
   loadPendingReviews(): void {
     this.activeTab = 'reviews';
-    fetch('/api/reviews/pending', { headers: { 'X-Admin-Key': ADMIN_PIN } })
+    fetch('/api/reviews/all', { headers: { 'X-Admin-Key': ADMIN_PIN } })
       .then(r => r.ok ? r.json() : Promise.reject())
       .then(data => {
         this.pendingReviews = data;
@@ -257,13 +257,19 @@ export class Admin implements OnInit {
     return '★'.repeat(n) + '☆'.repeat(5 - n);
   }
 
+  emailPrefix(email: string | undefined): string {
+    if (!email) return '';
+    return email.split('@')[0];
+  }
+
   approveReview(id: string): void {
     fetch(`/api/reviews/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_PIN },
       body: JSON.stringify({ status: 'approved' })
     }).then(() => {
-      this.pendingReviews = this.pendingReviews.filter(r => r._id !== id);
+      const r = this.pendingReviews.find(r => r._id === id);
+      if (r) (r as any).status = 'approved';
       this.saveMessage = '✅ Review approved.';
       this.cdr.detectChanges();
       setTimeout(() => { this.saveMessage = ''; this.cdr.detectChanges(); }, 3000);
@@ -276,8 +282,22 @@ export class Admin implements OnInit {
       headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_PIN },
       body: JSON.stringify({ status: 'rejected' })
     }).then(() => {
-      this.pendingReviews = this.pendingReviews.filter(r => r._id !== id);
+      const r = this.pendingReviews.find(r => r._id === id);
+      if (r) (r as any).status = 'rejected';
       this.saveMessage = '🗑 Review rejected.';
+      this.cdr.detectChanges();
+      setTimeout(() => { this.saveMessage = ''; this.cdr.detectChanges(); }, 3000);
+    });
+  }
+
+  deleteReview(id: string, name: string): void {
+    if (!confirm(`Permanently delete the review from "${name}"? This cannot be undone.`)) return;
+    fetch(`/api/reviews/${id}`, {
+      method: 'DELETE',
+      headers: { 'X-Admin-Key': ADMIN_PIN }
+    }).then(() => {
+      this.pendingReviews = this.pendingReviews.filter(r => r._id !== id);
+      this.saveMessage = '🗑 Review deleted.';
       this.cdr.detectChanges();
       setTimeout(() => { this.saveMessage = ''; this.cdr.detectChanges(); }, 3000);
     });
