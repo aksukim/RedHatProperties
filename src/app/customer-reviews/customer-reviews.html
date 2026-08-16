@@ -23,7 +23,7 @@
               <article class="review-card">
                 <p class="stars">{{ stars(r.rating) }}</p>
                 <p class="quote">"{{ r.comment }}"</p>
-                <p class="author">— {{ r.name }}@if (r.email) { <span class="review-email">({{ emailPrefix(r.email) }})</span> }</p>
+                <p class="author">— {{ r.name }}</p>
               </article>
             }
           </div>
