@@ -184,7 +184,7 @@ app.post('/api/reviews', async (req, res) => {
       email: email.trim().slice(0, 200),
       emailConsent,
       rating: ratingNum,
-      comment: comment.trim().slice(0, 1000),
+      comment: comment.trim().slice(0, 3000),
       status: 'pending',
       createdAt: new Date()
     });
