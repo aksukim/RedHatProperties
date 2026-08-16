@@ -164,10 +164,12 @@ app.get('/api/reviews/all', requireAdminKey, async (_req, res) => {
 app.post('/api/reviews', async (req, res) => {
   try {
     const { name, rating, comment } = req.body;
+    const firstName = req.body.firstName ?? name ?? '';
+    const lastName = req.body.lastName ?? '';
     const email = req.body.email ?? '';
     const emailConsent = req.body.emailConsent === true;
     const title = req.body.title ?? '';
-    if (!name?.trim() || !comment?.trim() || !title?.trim() || !rating) {
+    if (!firstName?.trim() || !comment?.trim() || !title?.trim() || !rating) {
       return res.status(400).json({ error: 'Name, title, rating, and comment are required.' });
     }
     const ratingNum = parseInt(rating, 10);
@@ -175,7 +177,9 @@ app.post('/api/reviews', async (req, res) => {
       return res.status(400).json({ error: 'Rating must be between 1 and 5.' });
     }
     await reviewsCol.insertOne({
-      name: name.trim().slice(0, 100),
+      name: firstName.trim().slice(0, 100),
+      firstName: firstName.trim().slice(0, 100),
+      lastName: lastName.trim().slice(0, 100),
       title: title.trim().slice(0, 150),
       email: email.trim().slice(0, 200),
       emailConsent,
