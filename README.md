@@ -1,228 +1,317 @@
-# Red Hat Properties — Angular Site
+﻿# Red Hat Properties — Technical Reference
 
 Eric Mikuska · Keller Williams Partners · Colorado Springs / Black Forest / Front Range
 
 ---
 
-## Project Structure
+## Table of Contents
+
+1. [Project Overview](#1-project-overview)
+2. [Tech Stack](#2-tech-stack)
+3. [Repository Structure](#3-repository-structure)
+4. [Local Development](#4-local-development)
+5. [Production Server Setup](#5-production-server-setup)
+6. [Deployment — Code Update](#6-deployment--code-update)
+7. [IP Change Recovery (Power Outage)](#7-ip-change-recovery-power-outage)
+8. [Node API Server](#8-node-api-server)
+9. [MongoDB Atlas](#9-mongodb-atlas)
+10. [Cloudflare Configuration](#10-cloudflare-configuration)
+11. [Admin — Site Manager](#11-admin--site-manager)
+12. [Data Flow](#12-data-flow)
+
+---
+
+## 1. Project Overview
+
+Angular 22 single-page application serving as a real estate marketing and listing management site. The Angular frontend is served statically by IIS. A Node.js/Express backend handles API calls (listings, reviews, image uploads) and persists data to MongoDB Atlas. Cloudflare sits in front for DNS, HTTPS, and API proxying.
+
+Live site: **https://www.redhatproperties.com**
+
+---
+
+## 2. Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | Angular 22, TypeScript |
+| Backend API | Node.js + Express (server.js) |
+| Database | MongoDB Atlas (free M0 tier) |
+| Web Server | IIS 10 (Windows 11 Home) |
+| DNS / Proxy | Cloudflare |
+| API Proxy | Cloudflare Worker |
+| Process Manager | PM2 (via npx pm2) |
+| Domain | redhatproperties.com |
+
+---
+
+## 3. Repository Structure
 
 ```
-!RHPL/
-├── red-hat-properties-angular/   ← This Angular app (frontend)
-└── red-hat-properties-api/       ← C# ASP.NET Core API (backend)
-    └── listings-data.json        ← Live listing data written by the API
+/
+├── server.js               Node/Express API server
+├── .env                    Environment secrets (NOT committed to git)
+├── angular.json            Angular build config
+├── package.json            npm scripts and dependencies
+├── proxy.conf.json         Dev proxy: /api to localhost:8080
+├── src/
+│   ├── app/
+│   │   ├── admin/          Site Manager (PIN-protected)
+│   │   ├── browse-listings/
+│   │   ├── customer-reviews/
+│   │   ├── contact/        Formspree-backed contact form
+│   │   ├── home/
+│   │   ├── about-me/
+│   │   ├── black-forest/
+│   │   ├── terra-ridge/
+│   │   └── services/
+│   ├── assets/
+│   │   ├── images/         All listing and site images
+│   │   └── data/
+│   │       └── listings.json   Static fallback (used if API is down)
+│   └── web.config          IIS rewrite rules (copied to dist on build)
+└── dist/                   Build output (gitignored, copy to wwwroot)
 ```
 
 ---
 
-## Running Locally
+## 4. Local Development
 
-Two servers must be running simultaneously:
+### Prerequisites
+- Node.js (LTS)
+- npm
 
-### 1. Angular Dev Server
+### Setup
+```powershell
+git clone https://github.com/aksukim/RedHatProperties
+cd RedHatProperties
+npm install
 ```
-cd red-hat-properties-angular
-ng serve
-```
-Opens at `http://localhost:4200` (may use a different port if 4200 is taken).
 
-### 2. C# API
+### Create .env
 ```
-cd red-hat-properties-api
-dotnet run
+MONGODB_URI=mongodb+srv://emikuska_db_user:<password>@cluster0.tfmdp5c.mongodb.net/?retryWrites=true&w=majority
+DB_NAME=redhatproperties
+ADMIN_KEY=7751
+PORT=8080
+# Leave IMAGES_DIR blank on dev laptop
 ```
-Runs at `http://localhost:5000`. The Angular dev server proxies all `/api/*` requests to this port via `proxy.conf.json`.
+
+NOTE: MongoDB is blocked on the Progressive corporate network. Use a phone hotspot to test locally.
+
+### Run (two terminals)
+```powershell
+# Terminal 1
+npm run server
+
+# Terminal 2
+npm start
+```
+
+Site at: http://localhost:4200
 
 ---
 
-## Pages
+## 5. Production Server Setup
 
-| URL | Description |
-|-----|-------------|
-| `/` | Home / Agent Hub |
-| `/browse-listings` | Active listings, recently sold, equestrian search |
-| `/contact` | Contact form (Formspree) |
-| `/black-forest` | Black Forest community page |
-| `/terra-ridge` | Terra Ridge community page |
-| `/admin` | Listings manager (PIN protected) |
+- OS: Windows 11 Home
+- Local IP: 192.168.1.37 (DHCP reserved in router)
+- Public IP: 140.235.41.187
+- Site folder: C:\inetpub\wwwroot\RedHat\
+- Repo folder: C:\Users\mrmik\Documents\WebsiteProjects\RedHatProperties\
+- Router admin: http://192.168.1.1 (Netgear Nighthawk MR70)
 
----
+### Router port forwarding
+| External Port | Internal IP | Internal Port | Purpose |
+|---|---|---|---|
+| 80 | 192.168.1.37 | 80 | HTTP |
+| 443 | 192.168.1.37 | 443 | HTTPS / IIS |
+| 8080 | 192.168.1.37 | 8080 | Node API |
 
-## Admin Page (`/admin`)
+### PM2 auto-start
+Startup batch file at:
+C:\Users\mrmik\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\rhpl-api.bat
 
-The hidden link is in the footer of every page (invisible — click at the very bottom).
-
-### What it does
-- Add, edit, and delete active listings and sold properties
-- Upload property photos directly to the server
-- Save all changes to the API (no manual file replacement)
-
-### Workflow
-1. Go to `/admin`, enter PIN
-2. Click **Edit** on a listing (or **+ Add Active Listing**)
-3. Fill in fields, pick a photo — photo uploads immediately
-4. Click **Save Listing**
-5. Click **Save & Download JSON** → saves to server
-
-### Dev notes
-- Picking a new photo triggers a hot reload (Angular watches `src/assets/images/`)
-- Auth persists via `localStorage` — you only need the PIN once per browser
-- In production (deployed), no hot reload occurs
-
----
-
-## Data Flow
-
+Contents:
 ```
-Admin saves → POST /api/listings → listings-data.json  (API source of truth)
-Browse Listings loads → GET /api/listings → reads listings-data.json
+cd C:\Users\mrmik\Documents\WebsiteProjects\RedHatProperties
+npx pm2 resurrect
 ```
 
-The static `src/assets/data/listings.json` is a fallback used when the API is unreachable.
+Run `npx pm2 save` after any PM2 changes.
 
 ---
 
-## Listing Data Files
+## 6. Deployment — Code Update
 
-| File | Purpose |
-|------|---------|
-| `src/assets/data/listings.json` | Static fallback (used when API is down) |
-| `../listings-data.json` | Live data written by the API |
-| `src/assets/data/rhpl-listings.csv` | Human-editable spreadsheet format |
+Run on the production server after any code change:
 
-See [src/assets/data/README.md](src/assets/data/README.md) for CSV column reference.
-
----
-
-## Tech Stack
-
-- **Frontend**: Angular 17+ (standalone components, esbuild)
-- **Backend**: ASP.NET Core 10 (Kestrel, minimal API)
-- **Contact form**: Formspree
-- **Hosting plan**: Spare laptop + Cloudflare Tunnel (pending ISP/setup)
-
----
-
-## Building for Production
-
-```
-ng build
+```powershell
+cd C:\Users\mrmik\Documents\WebsiteProjects\RedHatProperties
+git pull
+npm install
+npm run build
+npx pm2 restart rhpl-api
+Copy-Item "dist\red-hat-properties-angular\browser\*" "C:\inetpub\wwwroot\RedHat\" -Recurse -Force
 ```
 
-Output goes to `dist/red-hat-properties-angular/browser/`. Copy contents to `red-hat-properties-api/wwwroot/` for the API to serve them.
-
-In production, update `red-hat-properties-api/appsettings.json`:
-- `ListingsJsonPath` → `wwwroot/assets/data/listings.json`
-- `ImagesPath` → `wwwroot/assets/images`
-- `CorsOrigins` → your domain (e.g. `https://redhatproperties.com`)
+Then hard refresh browser (Ctrl+F5) or test in incognito.
 
 ---
 
-## Cloudflare Tunnel (Public Deployment)
+## 7. IP Change Recovery (Power Outage)
 
-Cloudflare Tunnel makes the site publicly accessible with **zero code changes** to either project. It is purely infrastructure — a background Windows service on the spare laptop.
-
-### How it fits
-
+### Step 1 — Check public IP
+```powershell
+(Invoke-WebRequest -Uri "https://api.ipify.org").Content
 ```
-Internet
-    │
-    ▼
-Cloudflare Edge (free)
-  · Terminates HTTPS/SSL
-  · Routes redhatproperties.com traffic
-    │
-    │  (encrypted tunnel — outbound from your laptop)
-    ▼
-cloudflared.exe  ← Windows service on the spare laptop
-  · Tiny background agent, no project files
-  · Install once: winget install Cloudflare.cloudflared
-    │
-    ▼
-red-hat-properties-api (dotnet publish / dotnet run)
-  · Listens on port 5000
-  · Serves Angular built files from wwwroot/
-  · Handles all /api/* requests
+Expected: 140.235.41.187. If different, update Steps 3 and 4.
+
+### Step 2 — Check local IP
+```powershell
+(Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -like "192.168.*" }).IPAddress
+```
+Expected: 192.168.1.37. If different, update router port forwarding (Step 5).
+
+### Step 3 — Update Cloudflare DNS (if public IP changed)
+1. Cloudflare > redhatproperties.com > DNS
+2. Edit 'www' A record > new IP (orange cloud ON)
+3. Edit 'api' A record > new IP (grey cloud OFF)
+
+### Step 4 — Update Cloudflare Worker (if public IP changed)
+Usually handled by DNS update above. Worker uses api.redhatproperties.com hostname.
+If still failing: Cloudflare > Workers > rhpl-api-proxy > Edit code > verify targetUrl.
+
+### Step 5 — Update router port forwarding (if local IP changed)
+1. http://192.168.1.1 > Advanced > Port Forwarding
+2. Update rules for ports 80, 443, 8080 to new local IP
+
+### Step 6 — Restart services
+```powershell
+npx pm2 restart rhpl-api
+iisreset
 ```
 
-### Where things live
+### Step 7 — Verify
+```powershell
+Invoke-RestMethod http://localhost:8080/api/listings
+Invoke-RestMethod https://www.redhatproperties.com/api/listings
+```
 
-| Component | Location | Purpose |
-|-----------|----------|---------|
-| Angular app | `red-hat-properties-angular/` | Your code |
-| C# API | `red-hat-properties-api/` | Your code |
-| cloudflared | Windows system service | Infrastructure only — no project files |
-| Cloudflare config | Cloudflare dashboard (web UI) | Maps domain → tunnel → port 5000 |
-
-### One-time production setup
-1. `ng build` → copy output to `red-hat-properties-api/wwwroot/`
-2. `dotnet run` → starts serving everything on port 5000
-3. `cloudflared` routes public traffic to port 5000
-4. Done — current code, unchanged, is live at `redhatproperties.com`
+Wait 2-5 minutes for DNS propagation if Cloudflare DNS was updated.
 
 ---
 
-## Fallback — KW Page When Laptop is Down
+## 8. Node API Server
 
-Once Cloudflare manages the domain, the old GoDaddy redirect stops working. A **Cloudflare Worker** replaces it with a smarter fallback: if the laptop is unreachable, visitors are automatically redirected to `ericmikuska.kw.com`.
+File: server.js | Port: 8080 | Managed by: PM2
 
-### Worker script
+### Routes
+| Method | Route | Auth | Purpose |
+|---|---|---|---|
+| GET | /api/listings | None | Get active + sold listings |
+| POST | /api/listings | X-Admin-Key | Save listings |
+| POST | /api/listings/image | X-Admin-Key | Upload image |
+| GET | /api/reviews | None | Get approved reviews |
+| GET | /api/reviews/all | X-Admin-Key | Get all reviews |
+| POST | /api/reviews | None | Submit review (pending) |
+| PATCH | /api/reviews/:id | X-Admin-Key | Approve or reject review |
+| DELETE | /api/reviews/:id | X-Admin-Key | Delete review |
 
-In the Cloudflare dashboard → **Workers & Pages** → **Create Worker** → paste this → **Deploy**:
+Admin key: set in .env as ADMIN_KEY. Must match ADMIN_PIN in admin.ts. Value: 7751.
+
+### PM2 commands
+```powershell
+npx pm2 status
+npx pm2 restart rhpl-api
+npx pm2 logs rhpl-api --nostream
+npx pm2 stop rhpl-api
+npx pm2 start server.js --name rhpl-api
+npx pm2 save
+```
+
+---
+
+## 9. MongoDB Atlas
+
+- Cluster: Cluster0 (M0 free), AWS
+- Database: redhatproperties
+- Collections: listings, reviews
+- Host: cluster0.tfmdp5c.mongodb.net
+- User: emikuska_db_user
+- Network Access: 0.0.0.0/0
+
+### listings collection
+Single document (_id: "main") with active[] and sold[] arrays.
+
+### reviews collection
+One document per review. Fields: name, firstName, lastName, title, email, emailConsent, rating, comment, status (pending/approved/rejected), createdAt.
+
+---
+
+## 10. Cloudflare Configuration
+
+Zone: redhatproperties.com | SSL: Flexible
+
+### DNS Records
+| Type | Name | Value | Proxy |
+|---|---|---|---|
+| A | www | 140.235.41.187 | Orange (proxied) |
+| A | api | 140.235.41.187 | Grey (DNS only) |
+
+IMPORTANT: api record must be grey cloud (DNS only). Orange cloud causes error 1003.
+
+### Worker: rhpl-api-proxy
+Routes: www.redhatproperties.com/api/* and redhatproperties.com/api/*
 
 ```javascript
 export default {
-  async fetch(request, env) {
-    try {
-      const response = await fetch(request, { cf: { timeout: 8 } });
-      if (response.status === 502 || response.status === 503) {
-        return Response.redirect('https://ericmikuska.kw.com', 302);
-      }
-      return response;
-    } catch {
-      return Response.redirect('https://ericmikuska.kw.com', 302);
+  async fetch(request) {
+    const url = new URL(request.url);
+    if (url.pathname.startsWith('/api/')) {
+      const targetUrl = `http://api.redhatproperties.com:8080${url.pathname}${url.search}`;
+      return fetch(new Request(targetUrl, {
+        method: request.method,
+        headers: request.headers,
+        body: ['GET', 'HEAD'].includes(request.method) ? null : request.body,
+        redirect: 'follow'
+      }));
     }
+    return fetch(request);
   }
-}
+};
 ```
 
-### Route the Worker to your domain
+---
 
-In Cloudflare dashboard → **Workers & Pages** → **Routes** → add:
+## 11. Admin — Site Manager
+
+URL: https://www.redhatproperties.com/admin
+PIN: 7751
+
+### Features
+- Active Listings — add, edit, delete (two-step confirm)
+- Sold Listings — add, edit, delete (two-step confirm)
+- Reviews — approve/reject/delete (two-step confirm), shows email prefix and consent flag
+
+### Image uploads
+Saved to IMAGES_DIR on server: C:\inetpub\wwwroot\RedHat\assets\images
+
+---
+
+## 12. Data Flow
+
 ```
-redhatproperties.com/*
-```
-and
-```
-www.redhatproperties.com/*
-```
-
-### Result
-
-| Laptop status | What visitors see |
-|---|---|
-| ✅ Running | Your Red Hat Properties site |
-| ❌ Down / restarting | Automatically redirected to `ericmikuska.kw.com` |
-
-
-
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
+Browser
+  |
+  |-- Static assets (HTML/JS/CSS/images)
+  |     Cloudflare --> IIS --> C:\inetpub\wwwroot\RedHat\
+  |
+  |-- /api/* requests
+        Cloudflare Worker --> Node port 8080 --> MongoDB Atlas
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Fallback: if /api/listings is unreachable, Angular falls back to assets/data/listings.json.
 
-## Additional Resources
+---
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+*Last updated: August 2026*
