@@ -26,6 +26,16 @@ export class CustomerReviews implements OnInit {
   reviews: Review[] = [];
   loaded = false;
 
+  get averageRating(): string {
+    if (!this.reviews.length) return '';
+    const avg = this.reviews.reduce((s, r) => s + r.rating, 0) / this.reviews.length;
+    return avg.toFixed(1);
+  }
+
+  ratingLabel(n: number): string {
+    return Number.isInteger(n) ? `${n}.0` : n.toFixed(1);
+  }
+
   // Submission form
   formName = '';
   formLastName = '';

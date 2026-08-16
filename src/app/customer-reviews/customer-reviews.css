@@ -116,7 +116,32 @@ h1 {
   color: #ffcf57;
   letter-spacing: 0.08em;
   margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
+
+.rating-num {
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.avg-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 0.6rem 1rem;
+  width: fit-content;
+}
+
+.avg-stars { color: #ffcf57; font-size: 1.1rem; letter-spacing: 0.08em; }
+.avg-number { color: #fff; font-weight: 700; font-size: 0.9rem; }
 
 .quote {
   color: #e3e3e3;

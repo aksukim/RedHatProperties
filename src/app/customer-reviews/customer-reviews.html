@@ -18,12 +18,21 @@
         }
 
         @if (reviews.length > 0) {
+          @if (averageRating) {
+            <div class="avg-rating">
+              <span class="avg-stars">{{ stars(+averageRating) }}</span>
+              <span class="avg-number">{{ averageRating }} overall</span>
+            </div>
+          }
           <div class="reviews-grid">
             @for (r of reviews; track r._id) {
               <article class="review-card">
                 <div class="review-card-header">
-                  <p class="stars">{{ stars(r.rating) }}</p>
+                  <p class="stars">{{ stars(r.rating) }} <span class="rating-num">{{ ratingLabel(r.rating) }}</span></p>
                   <h3 class="review-title">{{ r.title || 'Review' }}</h3>
+                  @if (!isExpanded(r._id)) {
+                    <p class="author">&mdash; {{ displayName(r) }}</p>
+                  }
                 </div>
                 <button class="btn-view-more" (click)="toggleExpand(r._id)">
                   {{ isExpanded(r._id) ? 'View less \u2191' : 'View more \u2193' }}
