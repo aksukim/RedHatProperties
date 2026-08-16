@@ -261,7 +261,7 @@ Zone: redhatproperties.com | SSL: Flexible
 IMPORTANT: api record must be grey cloud (DNS only). Orange cloud causes error 1003.
 
 ### Worker: rhpl-api-proxy
-Routes: www.redhatproperties.com/api/* and redhatproperties.com/api/*
+Routes: `www.redhatproperties.com/api/*` and `redhatproperties.com/api/*`
 
 ```javascript
 export default {
@@ -280,6 +280,34 @@ export default {
   }
 };
 ```
+
+### Worker: rhpl-failover
+Routes: `www.redhatproperties.com/*` and `redhatproperties.com/*`
+
+Catches all requests. Attempts to reach the origin server with a 5-second timeout. If the origin is down or returns a 5xx error, redirects visitors to the KW fallback page instead of showing a Cloudflare error.
+
+```javascript
+export default {
+  async fetch(request) {
+    const FALLBACK_URL = 'https://ericmikuska.kw.com';
+    try {
+      const url = new URL(request.url);
+      const originUrl = `http://140.235.41.187${url.pathname}${url.search}`;
+      const response = await fetch(originUrl, {
+        signal: AbortSignal.timeout(5000)
+      });
+      if (response.status >= 500) {
+        return Response.redirect(FALLBACK_URL, 302);
+      }
+      return response;
+    } catch (err) {
+      return Response.redirect(FALLBACK_URL, 302);
+    }
+  }
+};
+```
+
+**Route priority:** rhpl-api-proxy routes (`/api/*`) are more specific and take precedence over rhpl-failover (`/*`). Both bare domain and www routes must exist for each Worker or requests to the uncovered domain will bypass the Worker entirely.
 
 ---
 
