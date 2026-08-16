@@ -122,6 +122,9 @@
                       {{ r.name }} &mdash; {{ reviewStars(r.rating) }}
                       <span class="review-status" [class]="'status-' + r.status">{{ r.status }}</span>
                     </p>
+                    @if (r.title) {
+                      <p class="row-meta"><strong>{{ r.title }}</strong></p>
+                    }
                     <p class="row-meta">
                       @if (r.email) { <span>📧 {{ emailPrefix(r.email) }}</span> }
                       &nbsp;|&nbsp; Email consent: <strong>{{ r.emailConsent ? 'Y' : 'N' }}</strong>

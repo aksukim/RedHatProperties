@@ -7,6 +7,7 @@ import { Footer } from '../footer/footer';
 interface Review {
   _id: string;
   name: string;
+  title?: string;
   email?: string;
   rating: number;
   comment: string;
@@ -26,11 +27,23 @@ export class CustomerReviews implements OnInit {
   // Submission form
   formName = '';
   formEmail = '';
+  formTitle = '';
   formRating = 5;
   formComment = '';
   formConsent = false;
   submitMessage = '';
   submitting = false;
+
+  // Expand/collapse per card
+  expandedIds = new Set<string>();
+
+  toggleExpand(id: string): void {
+    this.expandedIds.has(id) ? this.expandedIds.delete(id) : this.expandedIds.add(id);
+  }
+
+  isExpanded(id: string): boolean {
+    return this.expandedIds.has(id);
+  }
 
   constructor(private cdr: ChangeDetectorRef) {}
 
@@ -69,13 +82,14 @@ export class CustomerReviews implements OnInit {
     fetch('/api/reviews', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: this.formName, email: this.formEmail, rating: this.formRating, comment: this.formComment, emailConsent: this.formConsent })
+      body: JSON.stringify({ name: this.formName, email: this.formEmail, title: this.formTitle, rating: this.formRating, comment: this.formComment, emailConsent: this.formConsent })
     })
     .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e.error)))
     .then(() => {
       this.submitMessage = '✅ Thank you! Your review has been submitted and will appear after approval.';
       this.formName = '';
       this.formEmail = '';
+      this.formTitle = '';
       this.formRating = 5;
       this.formComment = '';
       this.formConsent = false;

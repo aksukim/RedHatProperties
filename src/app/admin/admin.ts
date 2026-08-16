@@ -23,7 +23,7 @@ export class Admin implements OnInit {
   // ── Data ──────────────────────────────────────────────────
   data: ListingsData = { active: [], sold: [] };
   activeTab: 'active' | 'sold' | 'reviews' = 'active';
-  pendingReviews: { _id: string; name: string; email?: string; emailConsent?: boolean; rating: number; comment: string; status: string }[] = [];
+  pendingReviews: { _id: string; name: string; title?: string; email?: string; emailConsent?: boolean; rating: number; comment: string; status: string }[] = [];
 
   // ── Edit state ────────────────────────────────────────────
   mode: 'list' | 'edit' = 'list';
