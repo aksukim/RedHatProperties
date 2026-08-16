@@ -23,19 +23,17 @@
               <article class="review-card">
                 <div class="review-card-header">
                   <p class="stars">{{ stars(r.rating) }}</p>
-                  @if (r.title) {
-                    <h3 class="review-title">{{ r.title }}</h3>
-                  }
+                  <h3 class="review-title">{{ r.title || 'Review' }}</h3>
+                  <p class="author">— {{ r.name }}</p>
                 </div>
-                <div class="review-card-body">
-                  <p class="quote" [class.truncated]="!isExpanded(r._id)">"{{ r.comment }}"</p>
-                  @if (r.comment.length > 120) {
-                    <button class="btn-view-more" (click)="toggleExpand(r._id)">
-                      {{ isExpanded(r._id) ? 'View less ↑' : 'View more ↓' }}
-                    </button>
-                  }
-                </div>
-                <p class="author">— {{ r.name }}</p>
+                @if (isExpanded(r._id)) {
+                  <div class="review-card-body">
+                    <p class="quote">"{{ r.comment }}"</p>
+                  </div>
+                }
+                <button class="btn-view-more" (click)="toggleExpand(r._id)">
+                  {{ isExpanded(r._id) ? 'View less ↑' : 'View more ↓' }}
+                </button>
               </article>
             }
           </div>
@@ -54,7 +52,7 @@
               <input type="text" [(ngModel)]="formName" placeholder="First name or initials" maxlength="100">
             </div>
             <div class="form-row">
-              <label>Review Title <span class="field-optional">(optional)</span></label>
+              <label>Review Title</label>
               <input type="text" [(ngModel)]="formTitle" placeholder="e.g. Smooth transaction from start to finish" maxlength="150">
             </div>
             <div class="form-row">

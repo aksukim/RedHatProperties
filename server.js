@@ -167,8 +167,8 @@ app.post('/api/reviews', async (req, res) => {
     const email = req.body.email ?? '';
     const emailConsent = req.body.emailConsent === true;
     const title = req.body.title ?? '';
-    if (!name?.trim() || !comment?.trim() || !rating) {
-      return res.status(400).json({ error: 'Name, rating, and comment are required.' });
+    if (!name?.trim() || !comment?.trim() || !title?.trim() || !rating) {
+      return res.status(400).json({ error: 'Name, title, rating, and comment are required.' });
     }
     const ratingNum = parseInt(rating, 10);
     if (ratingNum < 1 || ratingNum > 5) {

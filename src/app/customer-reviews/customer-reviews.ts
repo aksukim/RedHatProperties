@@ -72,8 +72,8 @@ export class CustomerReviews implements OnInit {
   }
 
   submitReview(): void {
-    if (!this.formName.trim() || !this.formComment.trim()) {
-      this.submitMessage = '⚠️ Please fill in your name and comment.';
+    if (!this.formName.trim() || !this.formComment.trim() || !this.formTitle.trim()) {
+      this.submitMessage = '⚠️ Please fill in your name, title, and comment.';
       this.cdr.detectChanges();
       return;
     }

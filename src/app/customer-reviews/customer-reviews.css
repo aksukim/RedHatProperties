@@ -79,8 +79,7 @@ h1 {
 }
 
 .review-card-body {
-  padding: 0.85rem 1rem 0;
-  flex: 1;
+  padding: 0.85rem 1rem;
 }
 
 .quote {
@@ -90,33 +89,26 @@ h1 {
   font-style: italic;
 }
 
-.quote.truncated {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
 .btn-view-more {
   background: none;
   border: none;
+  border-top: 1px solid rgba(255,255,255,0.08);
   color: #df000d;
   font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
-  padding: 0.3rem 0;
+  padding: 0.5rem 1rem;
   display: block;
+  width: 100%;
+  text-align: left;
 }
 
 .btn-view-more:hover { color: #ff3333; }
 
 .author {
-  color: #fff;
+  color: #a0a0a0;
   font-size: 0.82rem;
-  font-weight: 700;
-  padding: 0.75rem 1rem 0.85rem;
-  border-top: 1px solid rgba(255,255,255,0.08);
-  margin-top: 0.5rem;
+  margin-top: 0.4rem;
 }
 
 .stars {
