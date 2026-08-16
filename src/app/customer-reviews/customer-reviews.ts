@@ -7,6 +7,8 @@ import { Footer } from '../footer/footer';
 interface Review {
   _id: string;
   name: string;
+  firstName?: string;
+  lastName?: string;
   title?: string;
   email?: string;
   rating: number;
@@ -26,6 +28,7 @@ export class CustomerReviews implements OnInit {
 
   // Submission form
   formName = '';
+  formLastName = '';
   formEmail = '';
   formTitle = '';
   formRating = 5;
@@ -65,10 +68,11 @@ export class CustomerReviews implements OnInit {
     return '★'.repeat(n) + '☆'.repeat(5 - n);
   }
 
-  /** Returns the part of the email before the @ for display */
-  emailPrefix(email: string | undefined): string {
-    if (!email) return '';
-    return email.split('@')[0];
+  /** Returns display name: FirstName L. */
+  displayName(r: Review): string {
+    const first = r.firstName || r.name || '';
+    const last = r.lastName || '';
+    return last ? `${first} ${last.charAt(0).toUpperCase()}.` : first;
   }
 
   submitReview(): void {
@@ -82,12 +86,13 @@ export class CustomerReviews implements OnInit {
     fetch('/api/reviews', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: this.formName, email: this.formEmail, title: this.formTitle, rating: this.formRating, comment: this.formComment, emailConsent: this.formConsent })
+      body: JSON.stringify({ name: this.formName, lastName: this.formLastName, email: this.formEmail, title: this.formTitle, rating: this.formRating, comment: this.formComment, emailConsent: this.formConsent })
     })
     .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e.error)))
     .then(() => {
       this.submitMessage = '✅ Thank you! Your review has been submitted and will appear after approval.';
       this.formName = '';
+      this.formLastName = '';
       this.formEmail = '';
       this.formTitle = '';
       this.formRating = 5;

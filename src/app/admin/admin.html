@@ -79,7 +79,13 @@
                   </div>
                   <div class="row-actions">
                     <button class="btn-edit" (click)="startEdit('active', i)">Edit</button>
-                    <button class="btn-delete" (click)="deleteEntry('active', i)">Delete</button>
+                    @if (confirmDeleteListingKey === 'active-' + i) {
+                      <span class="confirm-label">Sure?</span>
+                      <button class="btn-delete" (click)="deleteEntry('active', i)">Yes</button>
+                      <button class="btn-edit" (click)="confirmDeleteListingKey = null">No</button>
+                    } @else {
+                      <button class="btn-delete" (click)="deleteEntry('active', i)">Delete</button>
+                    }
                   </div>
                 </div>
               }
@@ -103,7 +109,13 @@
                   </div>
                   <div class="row-actions">
                     <button class="btn-edit" (click)="startEdit('sold', i)">Edit</button>
-                    <button class="btn-delete" (click)="deleteEntry('sold', i)">Delete</button>
+                    @if (confirmDeleteListingKey === 'sold-' + i) {
+                      <span class="confirm-label">Sure?</span>
+                      <button class="btn-delete" (click)="deleteEntry('sold', i)">Yes</button>
+                      <button class="btn-edit" (click)="confirmDeleteListingKey = null">No</button>
+                    } @else {
+                      <button class="btn-delete" (click)="deleteEntry('sold', i)">Delete</button>
+                    }
                   </div>
                 </div>
               }
@@ -138,7 +150,13 @@
                     @if (r.status !== 'rejected') {
                       <button class="btn-delete" (click)="rejectReview(r._id)">Reject</button>
                     }
-                    <button class="btn-delete" (click)="deleteReview(r._id, r.name)" style="background:#7a0000">Delete</button>
+                    @if (confirmDeleteReviewId === r._id) {
+                      <span class="confirm-label">Sure?</span>
+                      <button class="btn-delete" (click)="deleteReview(r._id, r.name)" style="background:#7a0000">Yes</button>
+                      <button class="btn-edit" (click)="confirmDeleteReviewId = null">No</button>
+                    } @else {
+                      <button class="btn-delete" (click)="deleteReview(r._id, r.name)" style="background:#7a0000">Delete</button>
+                    }
                   </div>
                 </div>
               }

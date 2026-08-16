@@ -39,6 +39,10 @@ export class Admin implements OnInit {
 
   saveMessage = '';
 
+  // ── Inline delete confirmation ────────────────────────────
+  confirmDeleteListingKey: string | null = null;  // 'active-0', 'sold-2' etc
+  confirmDeleteReviewId: string | null = null;
+
   constructor(private listingsService: ListingsService, private ngZone: NgZone, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
@@ -171,10 +175,16 @@ export class Admin implements OnInit {
   }
 
   deleteEntry(type: 'active' | 'sold', index: number): void {
+    const key = `${type}-${index}`;
+    if (this.confirmDeleteListingKey !== key) {
+      this.confirmDeleteListingKey = key;
+      this.cdr.detectChanges();
+      return;
+    }
+    this.confirmDeleteListingKey = null;
     const label = type === 'active'
       ? this.data.active[index].address
       : this.data.sold[index].address;
-    if (!confirm(`Delete listing at "${label}"?`)) return;
     if (type === 'active') {
       this.data.active.splice(index, 1);
     } else {
@@ -291,7 +301,12 @@ export class Admin implements OnInit {
   }
 
   deleteReview(id: string, name: string): void {
-    if (!confirm(`Permanently delete the review from "${name}"? This cannot be undone.`)) return;
+    if (this.confirmDeleteReviewId !== id) {
+      this.confirmDeleteReviewId = id;
+      this.cdr.detectChanges();
+      return;
+    }
+    this.confirmDeleteReviewId = null;
     fetch(`/api/reviews/${id}`, {
       method: 'DELETE',
       headers: { 'X-Admin-Key': ADMIN_PIN }

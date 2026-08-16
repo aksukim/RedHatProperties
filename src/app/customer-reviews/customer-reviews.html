@@ -24,7 +24,7 @@
                 <div class="review-card-header">
                   <p class="stars">{{ stars(r.rating) }}</p>
                   <h3 class="review-title">{{ r.title || 'Review' }}</h3>
-                  <p class="author">— {{ r.name }}</p>
+                  <p class="author">— {{ displayName(r) }}</p>
                 </div>
                 @if (isExpanded(r._id)) {
                   <div class="review-card-body">
@@ -48,8 +48,12 @@
 
           <div class="review-form">
             <div class="form-row">
-              <label>Your Name</label>
-              <input type="text" [(ngModel)]="formName" placeholder="First name or initials" maxlength="100">
+              <label>First Name</label>
+              <input type="text" [(ngModel)]="formName" placeholder="First name" maxlength="100">
+            </div>
+            <div class="form-row">
+              <label>Last Name</label>
+              <input type="text" [(ngModel)]="formLastName" placeholder="Last name" maxlength="100">
             </div>
             <div class="form-row">
               <label>Review Title</label>
@@ -71,7 +75,7 @@
             </div>
             <div class="form-row">
               <label>Your Review</label>
-              <textarea [(ngModel)]="formComment" rows="4" placeholder="Tell us about your experience…" maxlength="1000"></textarea>
+              <textarea [(ngModel)]="formComment" rows="8" placeholder="Tell us about your experience…" maxlength="1000"></textarea>
             </div>
             <div class="form-disclaimer">
               <p>By submitting this review, you confirm it is your honest opinion based on your personal experience. Red Hat Properties reserves the right to approve or decline any submission. Your personal information will not be shared with third parties.</p>

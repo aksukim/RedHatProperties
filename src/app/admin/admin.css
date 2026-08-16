@@ -25,6 +25,13 @@
 
 .review-comment { font-style: italic; color: #a0a0a0; }
 
+.confirm-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ffaaaa;
+  margin-right: 0.25rem;
+}
+
 /* ── PIN Gate ── */
 .pin-gate {
   display: flex;
