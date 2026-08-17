@@ -199,6 +199,24 @@ Invoke-RestMethod https://www.redhatproperties.com/api/listings
 
 Wait 2-5 minutes for DNS propagation if Cloudflare DNS was updated.
 
+### Emergency restart checklist
+Use this when the internet drops or the site is offline after a reboot:
+
+```powershell
+# 1. Restore internet on the router/modem first
+# 2. Restart the API
+npx pm2 restart rhpl-api
+
+# 3. Restart IIS
+iisreset
+
+# 4. Verify local services
+Invoke-RestMethod http://localhost:8080/api/listings
+Invoke-RestMethod http://localhost/
+```
+
+If the public IP or local IP changed, complete Steps 3-5 above before testing the site again.
+
 ---
 
 ## 8. Node API Server
