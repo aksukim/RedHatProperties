@@ -309,6 +309,22 @@ export default {
 
 **Route priority:** rhpl-api-proxy routes (`/api/*`) are more specific and take precedence over rhpl-failover (`/*`). Both bare domain and www routes must exist for each Worker or requests to the uncovered domain will bypass the Worker entirely.
 
+### Cloudflare Notifications
+
+Configured under **Cloudflare dashboard → Notifications**:
+
+| Notification | Type | Purpose |
+|---|---|---|
+| Passive Origin Monitoring | Traffic Monitoring | Email alert when Cloudflare cannot reach origin server (site down) |
+| Web Analytics Metrics Update | Web Analytics | Regular email with visitor stats (page views, top pages, countries) |
+
+To manage: **dash.cloudflare.com → Notifications → Active Notifications**
+
+### Web Analytics
+
+Cloudflare Web Analytics tracks page views, unique visitors, top pages, and referrers. View at:
+**Cloudflare dashboard → Analytics & Logs → Web Analytics**
+
 ---
 
 ## 11. Admin — Site Manager
