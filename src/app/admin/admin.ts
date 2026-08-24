@@ -21,17 +21,18 @@ export class Admin implements OnInit {
   pinError = '';
 
   // ── Data ──────────────────────────────────────────────────
-  data: ListingsData = { active: [], sold: [] };
-  activeTab: 'active' | 'sold' | 'reviews' = 'active';
+  data: ListingsData = { active: [], sold: [], bought: [] };
+  activeTab: 'active' | 'sold' | 'bought' | 'reviews' = 'active';
   pendingReviews: { _id: string; name: string; title?: string; email?: string; emailConsent?: boolean; rating: number; comment: string; status: string }[] = [];
 
   // ── Edit state ────────────────────────────────────────────
   mode: 'list' | 'edit' = 'list';
-  editingType: 'active' | 'sold' = 'active';
+  editingType: 'active' | 'sold' | 'bought' = 'active';
   editingIndex: number | null = null;
 
   activeForm: Listing = this.blankActive();
   soldForm: SoldListing = this.blankSold();
+  boughtForm: SoldListing = this.blankBought();
 
   // ── Image ─────────────────────────────────────────────────
   imagePreview: string | null = null;
@@ -50,14 +51,11 @@ export class Admin implements OnInit {
       .then(r => r.ok ? r.json() : Promise.reject())
       .catch(() => fetch('assets/data/listings.json').then(r => r.json()))
       .then((data: ListingsData) => {
-        this.data = {
-          active: data?.active ?? [],
-          sold: data?.sold ?? []
-        };
+        this.data = this.normalizeData(data);
         this.cdr.detectChanges();
       })
       .catch(() => {
-        this.data = { active: [], sold: [] };
+        this.data = { active: [], sold: [], bought: [] };
         this.cdr.detectChanges();
       });
   }
@@ -75,25 +73,29 @@ export class Admin implements OnInit {
   }
 
   // ── Navigation ────────────────────────────────────────────
-  startAdd(type: 'active' | 'sold'): void {
+  startAdd(type: 'active' | 'sold' | 'bought'): void {
     this.editingType = type;
     this.editingIndex = null;
     this.activeForm = this.blankActive();
     this.soldForm = this.blankSold();
+    this.boughtForm = this.blankBought();
     this.imagePreview = null;
     this.pendingImageName = '';
     this.mode = 'edit';
   }
 
-  startEdit(type: 'active' | 'sold', index: number): void {
+  startEdit(type: 'active' | 'sold' | 'bought', index: number): void {
     this.editingType = type;
     this.editingIndex = index;
     if (type === 'active') {
       this.activeForm = { ...this.data.active[index] };
       this.imagePreview = this.data.active[index].image || null;
-    } else {
+    } else if (type === 'sold') {
       this.soldForm = { ...this.data.sold[index] };
       this.imagePreview = this.data.sold[index].image || null;
+    } else {
+      this.boughtForm = { ...this.data.bought[index] };
+      this.imagePreview = this.data.bought[index].image || null;
     }
     this.pendingImageName = '';
     this.mode = 'edit';
@@ -111,7 +113,11 @@ export class Admin implements OnInit {
     const file = input.files?.[0];
     if (!file) return;
     this.pendingImageName = file.name;
-    const form = this.editingType === 'active' ? this.activeForm : this.soldForm;
+    const form = this.editingType === 'active'
+      ? this.activeForm
+      : this.editingType === 'sold'
+        ? this.soldForm
+        : this.boughtForm;
     form.image = `assets/images/${file.name}`;
 
     // Preview locally
@@ -135,7 +141,8 @@ export class Admin implements OnInit {
       // Auto-save listing data to API so image path persists through hot reload
       if (this.editingIndex !== null) {
         if (this.editingType === 'active') this.data.active[this.editingIndex].image = res.path;
-        else this.data.sold[this.editingIndex].image = res.path;
+        else if (this.editingType === 'sold') this.data.sold[this.editingIndex].image = res.path;
+        else this.data.bought[this.editingIndex].image = res.path;
       }
       fetch('/api/listings', {
         method: 'POST',
@@ -153,28 +160,51 @@ export class Admin implements OnInit {
   saveEntry(): void {
     if (this.editingType === 'active') {
       const entry = { ...this.activeForm };
+      entry.status = entry.status ?? 'active';
+      if (entry.status === 'sold') {
+        this.moveActiveToSold(entry);
+        this.mode = 'list';
+        this.activeTab = 'sold';
+        return;
+      }
       if (this.editingIndex === null) {
         entry.id = `active-${Date.now()}`;
-        entry.tags = ['Active Listing'];
+        entry.tags = [this.activeTagFromStatus(entry.status)];
         this.data.active.push(entry);
       } else {
+        entry.tags = [this.activeTagFromStatus(entry.status)];
         this.data.active[this.editingIndex] = entry;
       }
-    } else {
+    } else if (this.editingType === 'sold') {
       const entry = { ...this.soldForm };
       if (this.editingIndex === null) {
         entry.id = `sold-${Date.now()}`;
+        entry.status = 'sold';
         entry.tags = ['Sold'];
         this.data.sold.push(entry);
       } else {
+        entry.status = 'sold';
+        entry.tags = ['Sold'];
         this.data.sold[this.editingIndex] = entry;
+      }
+    } else {
+      const entry = { ...this.boughtForm };
+      if (this.editingIndex === null) {
+        entry.id = `bought-${Date.now()}`;
+        entry.status = 'sold';
+        entry.tags = ['Bought with Eric'];
+        this.data.bought.push(entry);
+      } else {
+        entry.status = 'sold';
+        entry.tags = ['Bought with Eric'];
+        this.data.bought[this.editingIndex] = entry;
       }
     }
     this.mode = 'list';
     this.activeTab = this.editingType;
   }
 
-  deleteEntry(type: 'active' | 'sold', index: number): void {
+  deleteEntry(type: 'active' | 'sold' | 'bought', index: number): void {
     const key = `${type}-${index}`;
     if (this.confirmDeleteListingKey !== key) {
       this.confirmDeleteListingKey = key;
@@ -184,11 +214,15 @@ export class Admin implements OnInit {
     this.confirmDeleteListingKey = null;
     const label = type === 'active'
       ? this.data.active[index].address
-      : this.data.sold[index].address;
+      : type === 'sold'
+        ? this.data.sold[index].address
+        : this.data.bought[index].address;
     if (type === 'active') {
       this.data.active.splice(index, 1);
-    } else {
+    } else if (type === 'sold') {
       this.data.sold.splice(index, 1);
+    } else {
+      this.data.bought.splice(index, 1);
     }
     // Persist the deletion immediately so other pages see the change
     this.saveMessage = '⏳ Saving…';
@@ -216,7 +250,7 @@ export class Admin implements OnInit {
     return {
       id: '', address: '', price: 0, beds: 0, baths: 0,
       sqft: 0, acres: 0, description: '', image: '',
-      tags: ['Active Listing'], mlsNumber: '', zillowUrl: ''
+      tags: ['Active Listing'], status: 'active', mlsNumber: '', zillowUrl: ''
     };
   }
 
@@ -224,9 +258,85 @@ export class Admin implements OnInit {
     return {
       id: '', address: '', price: 0, beds: 0, baths: 0,
       sqft: 0, acres: 0, description: '', image: '',
-      tags: ['Sold'], mlsNumber: '', zillowUrl: '',
+      tags: ['Sold'], status: 'sold', mlsNumber: '', zillowUrl: '',
       soldPrice: 0, soldDate: ''
     };
+  }
+
+  private blankBought(): SoldListing {
+    return {
+      id: '', address: '', price: 0, beds: 0, baths: 0,
+      sqft: 0, acres: 0, description: '', image: '',
+      tags: ['Bought with Eric'], status: 'sold', mlsNumber: '', zillowUrl: '',
+      soldPrice: 0, soldDate: ''
+    };
+  }
+
+  private normalizeData(data: ListingsData): ListingsData {
+    const active = (data?.active ?? []).map(item => ({
+      ...item,
+      status: this.defaultActiveStatus(item.status),
+      tags: item.tags?.length ? item.tags : [this.activeTagFromStatus(this.defaultActiveStatus(item.status))]
+    }));
+
+    const sold = (data?.sold ?? []).map(item => ({
+      ...item,
+      status: 'sold' as const,
+      tags: item.tags?.length ? item.tags : ['Sold']
+    }));
+
+    const bought = (data?.bought ?? []).map(item => ({
+      ...item,
+      status: 'sold' as const,
+      tags: item.tags?.length ? item.tags : ['Bought with Eric']
+    }));
+
+    return { active, sold, bought };
+  }
+
+  private defaultActiveStatus(status: Listing['status'] | undefined): Listing['status'] {
+    if (status === 'under_contract' || status === 'pending') return status;
+    if (status === 'sold') return 'sold';
+    return 'active';
+  }
+
+  private activeTagFromStatus(status: Listing['status']): string {
+    if (status === 'under_contract') return 'Under Contract';
+    if (status === 'pending') return 'Pending';
+    return 'Active Listing';
+  }
+
+  statusLabel(status: Listing['status'] | undefined): string {
+    if (status === 'under_contract') return 'Under Contract';
+    if (status === 'pending') return 'Pending';
+    if (status === 'sold') return 'Sold';
+    return 'Active';
+  }
+
+  statusClass(status: Listing['status'] | undefined): string {
+    if (status === 'under_contract') return 'listing-status-under-contract';
+    if (status === 'pending') return 'listing-status-pending';
+    if (status === 'sold') return 'listing-status-sold';
+    return 'listing-status-active';
+  }
+
+  private moveActiveToSold(entry: Listing): void {
+    const soldEntry: SoldListing = {
+      ...entry,
+      id: entry.id || `sold-${Date.now()}`,
+      status: 'sold',
+      tags: ['Sold'],
+      soldPrice: entry.price || 0,
+      soldDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+    };
+
+    if (this.editingIndex === null) {
+      this.data.sold.push(soldEntry);
+      return;
+    }
+
+    this.data.active.splice(this.editingIndex, 1);
+    this.data.sold.push(soldEntry);
   }
 
   formatPrice(price: number): string {

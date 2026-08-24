@@ -97,8 +97,12 @@ const upload = multer({
 app.get('/api/listings', async (_req, res) => {
   try {
     const doc = await listingsCol.findOne({ _id: 'main' });
-    if (!doc) return res.json({ active: [], sold: [] });
-    res.json({ active: doc.active ?? [], sold: doc.sold ?? [] });
+    if (!doc) return res.json({ active: [], sold: [], bought: [] });
+    res.json({
+      active: doc.active ?? [],
+      sold: doc.sold ?? [],
+      bought: doc.bought ?? []
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to load listings' });

@@ -304,6 +304,7 @@
 
 .section-badge.listed  { background-color: #df000d; color: #fff; }
 .section-badge.sold    { background-color: #2d6a2d; color: #fff; }
+.section-badge.bought  { background-color: #245f7a; color: #fff; }
 .section-badge.mls     { background-color: rgba(255,255,255,0.1); color: #a7a9ac; border: 1px solid #444; }
 
 .section-divider {
@@ -454,4 +455,20 @@
 
 .btn-load-search:hover {
   background-color: #b0000a;
+}
+
+.bought-banner {
+  background-color: rgba(36,95,122,0.9);
+}
+
+.tag-status-active {
+  background-color: rgba(34, 85, 34, 0.8);
+}
+
+.tag-status-under-contract {
+  background-color: rgba(140, 95, 14, 0.85);
+}
+
+.tag-status-pending {
+  background-color: rgba(92, 58, 148, 0.85);
 }

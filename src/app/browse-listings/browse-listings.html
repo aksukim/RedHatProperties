@@ -37,6 +37,7 @@
               <div class="listing-card">
                 <div class="listing-img" [style.background-image]="'url(' + imgUrl(listing.image) + ')'">
                   <div class="listing-tags">
+                    <span class="tag tag-status" [class]="'tag tag-status ' + listingStatusClass(listing.status)">{{ listingStatusLabel(listing.status) }}</span>
                     @for (tag of listing.tags; track tag) {
                       <span class="tag">{{ tag }}</span>
                     }
@@ -137,7 +138,58 @@
 
         <hr class="section-divider">
 
-        <!-- ── Section 3: Equestrian Listings (MLS) ── -->
+        <!-- ── Section 3: Buyer Closings ── -->
+        <section class="listings-section">
+          <div class="section-header">
+            <h2>Homes Bought for Clients</h2>
+            <span class="section-badge bought">Buyer Representation</span>
+          </div>
+          <div class="listings-grid">
+            @for (listing of buyerClosings; track listing.id) {
+              <div class="listing-card sold-card">
+                <div class="listing-img" [style.background-image]="'url(' + imgUrl(listing.image) + ')'">
+                  <div class="sold-banner bought-banner">BOUGHT — {{ listing.soldDate }}</div>
+                </div>
+                <div class="listing-body">
+                  <p class="listing-address">{{ listing.address }}</p>
+                  <div class="listing-specs">
+                    @if (listing.beds) { <span>🛏 {{ listing.beds }} bd</span> }
+                    @if (listing.baths) { <span>🛁 {{ listing.baths }} ba</span> }
+                    @if (listing.sqft) { <span>📐 {{ listing.sqft | number }} sqft</span> }
+                    @if (listing.acres) { <span>🌿 {{ listing.acres }} acres</span> }
+                  </div>
+                  <div class="sold-prices">
+                    <span class="sold-label">Bought for</span>
+                    <span class="sold-price">{{ formatPrice(listing.soldPrice) }}</span>
+                  </div>
+                  <p class="listing-desc">{{ listing.description }}</p>
+                  @if (listing.mlsNumber) {
+                    <p class="listing-mls">MLS# {{ listing.mlsNumber }}</p>
+                  }
+                  @if (listing.zillowUrl) {
+                    <a class="btn-zillow" [href]="listing.zillowUrl" target="_blank" rel="noopener">View on Zillow ↗</a>
+                  }
+                </div>
+              </div>
+            }
+            @empty {
+              <div class="listing-card listing-card-placeholder">
+                <div class="listing-img" style="background-image: url('assets/images/BF3.jpg')">
+                  <div class="sold-banner bought-banner">BOUGHT</div>
+                </div>
+                <div class="listing-body">
+                  <p class="listing-address">Buyer Success Stories</p>
+                  <p class="listing-desc">Homes represented on the buy side will appear here so clients can see recent wins.</p>
+                  <a class="btn-primary" [routerLink]="'/contact'">Plan Your Home Search &rarr;</a>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- ── Section 4: Equestrian Listings (MLS) ── -->
         <section class="listings-section">
           <div class="section-header">
             <h2>Equestrian &amp; Horse Properties</h2>

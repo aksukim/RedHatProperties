@@ -345,6 +345,23 @@
 
 .row-meta { font-size: 0.74rem; color: #555; margin: 0; }
 
+.status-pill {
+  display: inline-block;
+  margin-right: 0.45rem;
+  padding: 0.1rem 0.42rem;
+  border-radius: 4px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.listing-status-active { background: rgba(34, 85, 34, 0.45); color: #8ee08e; }
+.listing-status-under-contract { background: rgba(90, 64, 20, 0.45); color: #ffd189; }
+.listing-status-pending { background: rgba(60, 44, 90, 0.45); color: #d3b8ff; }
+.listing-status-sold { background: rgba(40, 40, 40, 0.65); color: #bdbdbd; }
+
 .row-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
 
 .btn-edit {
@@ -425,6 +442,7 @@
 }
 
 .form-field input,
+.form-field select,
 .form-field textarea {
   background-color: #1a1a1a;
   border: 1px solid #2a2a2a;
@@ -438,6 +456,7 @@
 }
 
 .form-field input:focus,
+.form-field select:focus,
 .form-field textarea:focus { border-color: #df000d; }
 
 .form-field textarea { resize: vertical; line-height: 1.6; }

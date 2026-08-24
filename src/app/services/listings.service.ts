@@ -14,6 +14,7 @@ export interface Listing {
   description: string;
   image: string;
   tags: string[];
+  status: 'active' | 'under_contract' | 'pending' | 'sold';
   mlsNumber?: string;
   zillowUrl?: string;
 }
@@ -26,6 +27,7 @@ export interface SoldListing extends Listing {
 export interface ListingsData {
   active: Listing[];
   sold: SoldListing[];
+  bought: SoldListing[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -43,7 +45,7 @@ export class ListingsService {
     return this.http.get<ListingsData>(this.dataUrl).pipe(
       catchError(err => {
         console.error('Failed to load listings:', err);
-        return of({ active: [], sold: [] });
+        return of({ active: [], sold: [], bought: [] });
       })
     );
   }
@@ -51,7 +53,7 @@ export class ListingsService {
   // ── Parse CSV text → ListingsData ─────────────────────────
   parseCsvToListings(text: string): ListingsData {
     const rows = this.parseCsv(text);
-    if (rows.length < 2) return { active: [], sold: [] };
+    if (rows.length < 2) return { active: [], sold: [], bought: [] };
 
     const header = rows[0].map(h => h.toLowerCase().replace(/[^a-z]/g, ''));
     const col    = (name: string) => header.indexOf(name);
@@ -59,7 +61,7 @@ export class ListingsService {
     const num    = (r: string[], name: string) => parseFloat(get(r, name)) || 0;
 
     const typeIdx = col('type');
-    if (typeIdx === -1) return { active: [], sold: [] };
+    if (typeIdx === -1) return { active: [], sold: [], bought: [] };
 
     const active: Listing[] = [];
     const sold: SoldListing[] = [];
@@ -81,7 +83,8 @@ export class ListingsService {
         mlsNumber:   get(r, 'mlsnumber') || get(r, 'mls'),
         zillowUrl:   get(r, 'zillowurl') || get(r, 'zillow'),
         image:       imgFile ? `assets/images/${imgFile}` : '',
-        tags:        type === 'active' ? ['Active Listing'] : ['Sold']
+        tags:        type === 'active' ? ['Active Listing'] : ['Sold'],
+        status:      type === 'active' ? 'active' : 'sold'
       };
       if (type === 'sold') {
         sold.push({ ...base, soldPrice: num(r, 'soldprice'), soldDate: get(r, 'solddate') });
@@ -89,7 +92,7 @@ export class ListingsService {
         active.push(base);
       }
     }
-    return { active, sold };
+    return { active, sold, bought: [] };
   }
 
   // ── Download listings as CSV ───────────────────────────────
@@ -106,6 +109,10 @@ export class ListingsService {
       ),
       ...data.sold.map(l =>
         ['sold', l.address, l.price, l.beds, l.baths, l.sqft, l.acres, l.description,
+         l.mlsNumber ?? '', l.zillowUrl ?? '', l.image.replace('assets/images/', ''), l.soldPrice, l.soldDate].map(esc).join(',')
+      ),
+      ...data.bought.map(l =>
+        ['bought', l.address, l.price, l.beds, l.baths, l.sqft, l.acres, l.description,
          l.mlsNumber ?? '', l.zillowUrl ?? '', l.image.replace('assets/images/', ''), l.soldPrice, l.soldDate].map(esc).join(',')
       )
     ];

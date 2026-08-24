@@ -20,6 +20,7 @@ export class BrowseListings implements OnInit, AfterViewInit {
   readonly equestrianIdxUrl: SafeResourceUrl;
   myListings: Listing[] = [];
   recentlySold: SoldListing[] = [];
+  buyerClosings: SoldListing[] = [];
   showSearch = false;
 
   constructor(
@@ -41,8 +42,12 @@ export class BrowseListings implements OnInit, AfterViewInit {
       .then(r => r.ok ? r.json() : Promise.reject())
       .catch(() => fetch('assets/data/listings.json').then(r => r.json()))
       .then(data => {
-        this.myListings = (data?.active ?? []) as Listing[];
+        this.myListings = (data?.active ?? []).map((item: Listing) => ({
+          ...item,
+          status: item.status ?? 'active'
+        })) as Listing[];
         this.recentlySold = (data?.sold ?? []) as SoldListing[];
+        this.buyerClosings = (data?.bought ?? []) as SoldListing[];
         this.loaded = true;
         this.cdr.detectChanges();
       })
@@ -61,6 +66,18 @@ export class BrowseListings implements OnInit, AfterViewInit {
   formatPrice(price: number): string {
     if (!price) return 'Call for Price';
     return '$' + price.toLocaleString();
+  }
+
+  listingStatusLabel(status: Listing['status'] | undefined): string {
+    if (status === 'under_contract') return 'Under Contract';
+    if (status === 'pending') return 'Pending';
+    return 'Active';
+  }
+
+  listingStatusClass(status: Listing['status'] | undefined): string {
+    if (status === 'under_contract') return 'tag-status-under-contract';
+    if (status === 'pending') return 'tag-status-pending';
+    return 'tag-status-active';
   }
 
   /** Ensures image paths are absolute so CSS background-image resolves correctly on any route. */
