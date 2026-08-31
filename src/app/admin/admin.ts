@@ -1,7 +1,7 @@
 import { Component, NgZone, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { ListingsService, ListingsData, Listing, SoldListing } from '../services/listings.service';
+import { ListingsData, Listing, SoldListing } from '../services/listings.models';
 
 // NOTE: Client-side PIN only — move to server-side auth when backend is added.
 // Change this value before deploying.
@@ -44,7 +44,7 @@ export class Admin implements OnInit {
   confirmDeleteListingKey: string | null = null;  // 'active-0', 'sold-2' etc
   confirmDeleteReviewId: string | null = null;
 
-  constructor(private listingsService: ListingsService, private ngZone: NgZone, private cdr: ChangeDetectorRef) {}
+  constructor(private ngZone: NgZone, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     fetch('/api/listings')
@@ -158,22 +158,23 @@ export class Admin implements OnInit {
 
   // ── Save / Delete ─────────────────────────────────────────
   saveEntry(): void {
+    let destinationTab: 'active' | 'sold' | 'bought' = this.editingType;
+
     if (this.editingType === 'active') {
       const entry = { ...this.activeForm };
       entry.status = entry.status ?? 'active';
       if (entry.status === 'sold') {
         this.moveActiveToSold(entry);
-        this.mode = 'list';
-        this.activeTab = 'sold';
-        return;
-      }
-      if (this.editingIndex === null) {
-        entry.id = `active-${Date.now()}`;
-        entry.tags = [this.activeTagFromStatus(entry.status)];
-        this.data.active.push(entry);
+        destinationTab = 'sold';
       } else {
-        entry.tags = [this.activeTagFromStatus(entry.status)];
-        this.data.active[this.editingIndex] = entry;
+        if (this.editingIndex === null) {
+          entry.id = `active-${Date.now()}`;
+          entry.tags = [this.activeTagFromStatus(entry.status)];
+          this.data.active.push(entry);
+        } else {
+          entry.tags = [this.activeTagFromStatus(entry.status)];
+          this.data.active[this.editingIndex] = entry;
+        }
       }
     } else if (this.editingType === 'sold') {
       const entry = { ...this.soldForm };
@@ -200,8 +201,10 @@ export class Admin implements OnInit {
         this.data.bought[this.editingIndex] = entry;
       }
     }
+
     this.mode = 'list';
-    this.activeTab = this.editingType;
+    this.activeTab = destinationTab;
+    this.persistListings('✅ Listing saved.', '⚠️ Saved locally — API unreachable. Re-open Admin when API is back.');
   }
 
   deleteEntry(type: 'active' | 'sold' | 'bought', index: number): void {
@@ -212,11 +215,6 @@ export class Admin implements OnInit {
       return;
     }
     this.confirmDeleteListingKey = null;
-    const label = type === 'active'
-      ? this.data.active[index].address
-      : type === 'sold'
-        ? this.data.sold[index].address
-        : this.data.bought[index].address;
     if (type === 'active') {
       this.data.active.splice(index, 1);
     } else if (type === 'sold') {
@@ -337,6 +335,27 @@ export class Admin implements OnInit {
 
     this.data.active.splice(this.editingIndex, 1);
     this.data.sold.push(soldEntry);
+  }
+
+  private persistListings(successMessage: string, failMessage: string): void {
+    this.saveMessage = '⏳ Saving…';
+    this.cdr.detectChanges();
+    fetch('/api/listings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_PIN },
+      body: JSON.stringify(this.data)
+    })
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(() => {
+      this.saveMessage = successMessage;
+      this.cdr.detectChanges();
+      setTimeout(() => { this.saveMessage = ''; this.cdr.detectChanges(); }, 4000);
+    })
+    .catch(() => {
+      this.saveMessage = failMessage;
+      this.cdr.detectChanges();
+      setTimeout(() => { this.saveMessage = ''; this.cdr.detectChanges(); }, 7000);
+    });
   }
 
   formatPrice(price: number): string {
