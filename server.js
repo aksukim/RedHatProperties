@@ -112,10 +112,10 @@ app.get('/api/listings', async (_req, res) => {
 // POST /api/listings — save full listings (admin only)
 app.post('/api/listings', requireAdminKey, async (req, res) => {
   try {
-    const { active = [], sold = [] } = req.body;
+    const { active = [], sold = [], bought = [] } = req.body;
     await listingsCol.replaceOne(
       { _id: 'main' },
-      { _id: 'main', active, sold },
+      { _id: 'main', active, sold, bought },
       { upsert: true }
     );
     res.json({ message: 'Listings saved.' });

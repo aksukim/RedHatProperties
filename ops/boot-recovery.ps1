@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
 # RHPL outage recovery settings
-$RepoPath = 'C:\Users\mrmik\Documents\WebsiteProjects\RedHatProperties'
+$RepoPath = Split-Path $PSScriptRoot -Parent
 $ApiProcessName = 'rhpl-api'
 $ApiHealthUrl = 'http://localhost:8080/api/listings'
 $SiteHealthUrl = 'http://localhost/'
@@ -84,11 +84,25 @@ function Invoke-CommandChecked {
   Write-Log "Running: $Display"
   & $FilePath @Arguments 2>&1 | Out-File -FilePath $LogFile -Encoding utf8 -Append
   if ($LASTEXITCODE -ne 0) {
-    Write-Log ('Command failed with exit code {0}: {1}' -f $LASTEXITCODE, $Display)
+    Write-Log ([string]::Format('Command failed with exit code {0} - {1}', $LASTEXITCODE, $Display))
     return $false
   }
 
   return $true
+}
+
+function Invoke-StackRestart {
+  param([string]$NpxPath)
+
+  $null = Invoke-CommandChecked -FilePath $NpxPath -Arguments @('pm2', 'resurrect') -Display 'npx pm2 resurrect'
+  $null = Invoke-CommandChecked -FilePath 'iisreset' -Arguments @() -Display 'iisreset'
+}
+
+function Test-StackHealth {
+  [pscustomobject]@{
+    Api  = Test-ApiOk
+    Site = Test-HttpOk -Url $SiteHealthUrl
+  }
 }
 
 Write-Log 'Boot recovery started'
@@ -106,32 +120,37 @@ if (-not $npxPath) {
 }
 
 Write-Log "Using npx at: $npxPath"
-Set-Location $RepoPath
+$pushedLocation = $false
+try {
+  Push-Location $RepoPath
+  $pushedLocation = $true
 
-if (-not (Wait-NetworkReady)) {
-  Write-Log 'Network was not confirmed. Continuing recovery anyway.'
+  if (-not (Wait-NetworkReady)) {
+    Write-Log 'Network was not confirmed. Continuing recovery anyway.'
+  }
+
+  Invoke-StackRestart -NpxPath $npxPath
+
+  $health = Test-StackHealth
+  Write-Log "Health check after first pass: API=$($health.Api) Site=$($health.Site)"
+
+  if (-not ($health.Api -and $health.Site)) {
+    Write-Log 'Health check failed. Running one retry sequence.'
+    $null = Invoke-CommandChecked -FilePath $npxPath -Arguments @('pm2', 'restart', $ApiProcessName) -Display "npx pm2 restart $ApiProcessName"
+    $null = Invoke-CommandChecked -FilePath 'iisreset' -Arguments @() -Display 'iisreset'
+    $health = Test-StackHealth
+    Write-Log "Health check after retry: API=$($health.Api) Site=$($health.Site)"
+  }
+
+  if ($health.Api -and $health.Site) {
+    Write-Log 'Boot recovery completed successfully'
+    exit 0
+  }
+
+  Write-Log 'Boot recovery completed with failures'
+  exit 1
+} finally {
+  if ($pushedLocation) {
+    Pop-Location
+  }
 }
-
-$pm2ResurrectOk = Invoke-CommandChecked -FilePath $npxPath -Arguments @('pm2', 'resurrect') -Display 'npx pm2 resurrect'
-$iisResetOk = Invoke-CommandChecked -FilePath 'iisreset' -Arguments @() -Display 'iisreset'
-
-$apiOk = Test-ApiOk
-$siteOk = Test-HttpOk -Url $SiteHealthUrl
-Write-Log "Health check after first pass: API=$apiOk Site=$siteOk"
-
-if (-not ($apiOk -and $siteOk)) {
-  Write-Log 'Health check failed. Running one retry sequence.'
-  $null = Invoke-CommandChecked -FilePath $npxPath -Arguments @('pm2', 'restart', $ApiProcessName) -Display "npx pm2 restart $ApiProcessName"
-  $null = Invoke-CommandChecked -FilePath 'iisreset' -Arguments @() -Display 'iisreset'
-  $apiOk = Test-ApiOk
-  $siteOk = Test-HttpOk -Url $SiteHealthUrl
-  Write-Log "Health check after retry: API=$apiOk Site=$siteOk"
-}
-
-if ($pm2ResurrectOk -and $iisResetOk -and $apiOk -and $siteOk) {
-  Write-Log 'Boot recovery completed successfully'
-  exit 0
-}
-
-Write-Log 'Boot recovery completed with failures'
-exit 1

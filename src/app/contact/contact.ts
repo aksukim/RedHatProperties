@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Header } from '../header/header';
 import { Footer } from '../footer/footer';
-import { fakeEmailValidator, typoSquatValidator, garbageTextValidator, minWordCountValidator } from '../validators/email-validators';
+import { garbageTextValidator, minWordCountValidator } from '../validators/email-validators';
 import { EmailValidationService } from '../services/email-validation.service';
 
 @Component({

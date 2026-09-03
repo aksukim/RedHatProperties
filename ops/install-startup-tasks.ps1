@@ -3,7 +3,7 @@ $ErrorActionPreference = 'Stop'
 # Run this in an elevated PowerShell session.
 $TaskNameRecovery = 'RHPL Boot Recovery'
 $TaskNameHealth = 'RHPL Health Check'
-$WorkingPath = 'C:\Users\mrmik\Documents\WebsiteProjects\RedHatProperties'
+$WorkingPath = Split-Path $PSScriptRoot -Parent
 $RecoveryScript = Join-Path $WorkingPath 'ops\boot-recovery.ps1'
 
 if (-not (Test-Path $RecoveryScript)) {

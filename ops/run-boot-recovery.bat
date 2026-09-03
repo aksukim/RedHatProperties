@@ -1,2 +1,2 @@
 @echo off
-powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Users\mrmik\Documents\WebsiteProjects\RedHatProperties\ops\boot-recovery.ps1"
+powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%~dp0boot-recovery.ps1"

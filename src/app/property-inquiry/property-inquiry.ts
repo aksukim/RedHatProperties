@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { fakeEmailValidator, typoSquatValidator, garbageTextValidator, minWordCountValidator } from '../validators/email-validators';
+import { garbageTextValidator, minWordCountValidator } from '../validators/email-validators';
 import { EmailValidationService } from '../services/email-validation.service';
 
 /**
