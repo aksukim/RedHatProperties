@@ -5,7 +5,7 @@ import { DecimalPipe } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Header } from '../header/header';
 import { Footer } from '../footer/footer';
-import { ListingsService, Listing, SoldListing } from '../services/listings.service';
+import { Listing, SoldListing } from '../services/listings.models';
 
 export type { Listing, SoldListing };
 
@@ -26,7 +26,6 @@ export class BrowseListings implements OnInit, AfterViewInit {
   constructor(
     private sanitizer: DomSanitizer,
     private el: ElementRef,
-    private listingsService: ListingsService,
     private cdr: ChangeDetectorRef
   ) {
     this.equestrianIdxUrl = this.sanitizer.bypassSecurityTrustResourceUrl(

@@ -84,7 +84,7 @@ function Invoke-CommandChecked {
   Write-Log "Running: $Display"
   & $FilePath @Arguments 2>&1 | Out-File -FilePath $LogFile -Encoding utf8 -Append
   if ($LASTEXITCODE -ne 0) {
-    Write-Log "Command failed with exit code $LASTEXITCODE: $Display"
+    Write-Log ('Command failed with exit code {0}: {1}' -f $LASTEXITCODE, $Display)
     return $false
   }
 
