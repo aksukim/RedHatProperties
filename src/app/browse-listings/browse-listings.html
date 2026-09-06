@@ -180,7 +180,7 @@
                 <div class="listing-body">
                   <p class="listing-address">Buyer Success Stories</p>
                   <p class="listing-desc">Homes represented on the buy side will appear here so clients can see recent wins.</p>
-                  <a class="btn-primary" [routerLink]="'/contact'">Plan Your Home Search &rarr;</a>
+                  <a class="btn-outline" [routerLink]="'/contact'">Plan Your Home Search &rarr;</a>
                 </div>
               </div>
             }
@@ -199,7 +199,7 @@
           @if (!showSearch) {
             <div class="idx-load-prompt">
               <p class="idx-tip">💡 <strong>Tip:</strong> When the search loads, enter <strong>2.5</strong> in the <em>Min. Acres</em> field to filter for acreage properties.</p>
-              <button class="btn-load-search" (click)="showSearch = true">Load MLS Property Search</button>
+              <button class="btn-outline" (click)="showSearch = true">Load MLS Property Search &rarr;</button>
             </div>
           }
           @if (showSearch) {

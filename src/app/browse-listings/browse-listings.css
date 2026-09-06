@@ -355,7 +355,7 @@
   margin-bottom: 2rem;
 }
 
-.btn-load-search {
+/* .btn-load-search {
   background-color: #df000d;
   color: #fff;
   border: none;
@@ -369,7 +369,7 @@
 
 .btn-load-search:hover {
   background-color: #b0000a;
-}
+} */
 
 .bought-banner {
   background-color: rgba(36,95,122,0.9);
@@ -385,4 +385,27 @@
 
 .tag-status-pending {
   background-color: rgba(92, 58, 148, 0.85);
+}
+
+.btn-outline {
+  display: inline-block;
+  border: 2px solid #df000d;
+  background-color: transparent;
+  color: #df000d;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-outline:hover {
+  background-color: #df000d;
+  color: #ffffff;
+}
+
+button.btn-outline {
+  cursor: pointer;          /* Gives it the link "hand" cursor */
+  font-family: inherit;     /* Prevents font switching */
+  font-size: inherit;       /* Keeps text size identical */
+  line-height: normal;      /* Fixes vertical text centering differences */
 }

@@ -96,7 +96,7 @@
             @if (submitMessage) {
               <p class="submit-msg">{{ submitMessage }}</p>
             }
-            <button class="btn-submit" (click)="submitReview()" [disabled]="submitting">
+            <button class="btn-outline" (click)="submitReview()" [disabled]="submitting">
               {{ submitting ? 'Submitting…' : 'Submit Review' }}
             </button>
           </div>
@@ -107,7 +107,7 @@
         <div class="cta">
           <h2>Ready to Work Together?</h2>
           <p>Let's talk about your goals and build the right strategy for your next move.</p>
-          <a class="btn-primary" [routerLink]="'/contact'">Contact Eric &rarr;</a>
+          <a class="btn-outline" [routerLink]="'/contact'">Contact Eric &rarr;</a>
         </div>
 
         <a class="back-link" [routerLink]="'/'">&#8592; Back to Agent Hub</a>
