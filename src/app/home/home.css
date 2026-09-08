@@ -1,4 +1,4 @@
-.hero {
+.banner {
   min-height: 92vh;
   background-size: cover;
   background-position: center;
@@ -6,9 +6,10 @@
   position: relative;
   display: flex;
   align-items: flex-start;
+  background-image: url('../../assets/images/COS.jpg');
 }
 
-.hero-overlay {
+.banner-overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(to right, rgba(0,0,0,0.75) 25%, rgba(0,0,0,0.1) 100%);
@@ -16,12 +17,12 @@
   align-items: flex-start;
 }
 
-.hero-content {
+.banner-content {
   max-width: 600px;
   padding: 0.5in 3rem 5rem 1.5rem;
 }
 
-.hero-eyebrow {
+.banner-eyebrow {
   font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -30,7 +31,7 @@
   margin-bottom: 1rem;
 }
 
-.hero-headline {
+.banner-headline {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 2.8rem;
   font-weight: 800;
@@ -39,11 +40,11 @@
   margin-bottom: 1.25rem;
 }
 
-.hero-headline .red {
+.banner-headline .red {
   color: #df000d;
 }
 
-.hero-sub {
+.banner-sub {
   font-size: 0.95rem;
   color: #d0d0d0;
   line-height: 1.7;
@@ -78,19 +79,6 @@ app-nav {
 
 .tr-private-link:hover {
   color: rgba(255,255,255,0.65);
-}
-
-.btn-primary {
-  background-color: #df000d;
-  color: #ffffff;
-  padding: 0.75rem 1.5rem;
-  text-decoration: none;
-  border-radius: 0.5rem;
-  transition: background-color 0.3s;
-}
-
-.btn-primary:hover {
-  background-color: #c7000a;
 }
 
 .btn-outline {

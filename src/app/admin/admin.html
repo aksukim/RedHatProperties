@@ -188,10 +188,10 @@
                     }
                     @if (confirmDeleteReviewId === r._id) {
                       <span class="confirm-label">Sure?</span>
-                      <button class="btn-delete" (click)="deleteReview(r._id, r.name)" style="background:#7a0000">Yes</button>
+                      <button class="btn-delete btn-delete-confirm" (click)="deleteReview(r._id, r.name)">Yes</button>
                       <button class="btn-edit" (click)="confirmDeleteReviewId = null">No</button>
                     } @else {
-                      <button class="btn-delete" (click)="deleteReview(r._id, r.name)" style="background:#7a0000">Delete</button>
+                      <button class="btn-delete btn-delete-confirm" (click)="deleteReview(r._id, r.name)">Delete</button>
                     }
                   </div>
                 </div>

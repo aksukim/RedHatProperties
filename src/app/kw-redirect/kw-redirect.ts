@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './kw-redirect.html',
   styleUrl: './kw-redirect.css'
 })
-export class KwRedirect implements OnInit {
+export class KwRedirect {
 
   // MLS number can be passed from parent component (e.g., property detail page)
   @Input() mlsNumber: string = '';
@@ -22,10 +22,6 @@ export class KwRedirect implements OnInit {
   private baseKwUrl = 'https://www.kw.com/agent/eric-mikuska'; // Replace with your actual KW URL
 
   isRedirecting = false;
-
-  ngOnInit(): void {
-    // Component initialization
-  }
 
   /**
    * Redirect user to KW portal based on action type

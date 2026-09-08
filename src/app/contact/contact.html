@@ -1,8 +1,8 @@
 <main class="page">
   <app-header />
 
-  <section class="contact-hero" style="background-image: url('assets/images/BF1.jpg')">
-    <div class="contact-hero-overlay">
+  <section class="contact-banner">
+    <div class="contact-banner-overlay">
       <div class="contact-container">
 
         <p class="eyebrow">BLACK FOREST · COLORADO SPRINGS · FRONT RANGE</p>
@@ -50,7 +50,7 @@
             }
 
             <!-- Hidden honeypot field - invisible to users, bots will fill it -->
-            <input type="text" formControlName="honeypot" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <input type="text" formControlName="honeypot" class="sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">
 
             <select formControlName="subject">
               <option value="">What can I help you with?</option>

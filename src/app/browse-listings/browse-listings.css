@@ -41,12 +41,18 @@
   overflow: hidden;
 }
 
-/* ── Hero ── */
-.listings-hero {
+/* ── Placeholder image backgrounds ── */
+.listing-img-bf2 { background-image: url('../../assets/images/BF2.jpg'); }
+.listing-img-bf3 { background-image: url('../../assets/images/BF3.jpg'); }
+.listing-img-bf6 { background-image: url('../../assets/images/BF6.jpg'); }
+.page-bg { background-image: url('../../assets/images/BF6.jpg'); }
+
+/* ── Banner ── */
+.listings-banner {
   padding: 0.5in 3rem 3rem 3rem;
 }
 
-.listings-hero-content {
+.listings-banner-content {
   max-width: 580px;
 }
 
@@ -59,7 +65,7 @@
   margin-bottom: 0.75rem;
 }
 
-.listings-hero h1 {
+.listings-banner h1 {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 2.8rem;
   font-weight: 800;
@@ -67,11 +73,11 @@
   margin-bottom: 0.75rem;
 }
 
-.listings-hero h1 .red {
+.listings-banner h1 .red {
   color: #df000d;
 }
 
-.listings-hero .sub {
+.listings-banner .sub {
   font-size: 0.95rem;
   color: #d0d0d0;
   max-width: 700px;
@@ -183,22 +189,6 @@
   color: #888;
   line-height: 1.6;
   margin-bottom: 1rem;
-}
-
-.btn-primary {
-  background-color: #df000d;
-  color: #fff;
-  padding: 0.4rem 1rem;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 0.82rem;
-  font-weight: 700;
-  transition: background-color 0.2s ease;
-  display: inline-block;
-}
-
-.btn-primary:hover {
-  background-color: #b0000a;
 }
 
 .back-link {

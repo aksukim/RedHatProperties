@@ -1,9 +1,10 @@
-.reviews-hero {
+.reviews-banner {
   min-height: 100vh;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   position: relative;
+  background-image: url('../../assets/images/BF4.jpg');
 }
 
 .reviews-overlay {
@@ -169,18 +170,6 @@ h1 {
   color: #d0d0d0;
   margin-bottom: 1rem;
 }
-
-.btn-primary {
-  display: inline-flex;
-  text-decoration: none;
-  background: #df000d;
-  color: #fff;
-  font-weight: 700;
-  border-radius: 6px;
-  padding: 0.65rem 1rem;
-}
-
-.btn-primary:hover { background: #b50009; }
 
 .back-link {
   display: inline-block;
